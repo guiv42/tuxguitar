@@ -11,12 +11,8 @@ public class OpenDocPlugin implements TGPlugin {
 	
 	public void setEnabled(boolean enabled) throws TGPluginException {
 		try {
-			if( this.openDocListener != null ){
-				this.openDocListener.setEnabled(enabled);
-			}else if(enabled){
+			if( this.openDocListener == null ){
 				this.openDocListener = new OpenDocListener();
-				this.openDocListener.setEnabled(true);
-				this.openDocListener.init();
 			}
 		} catch( Throwable throwable ){
 			throw new TGPluginException( throwable );
