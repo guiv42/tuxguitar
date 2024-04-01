@@ -59,6 +59,17 @@ public class TGPluginManager {
 		}
 	}
 	
+	//  DIRTY HACK, just prototyping!
+	public void earlyConnectMacOpenFilePlugin() {
+		for(TGPlugin plugin : this.plugins) {
+			if( "tuxguitar-cocoa-integration".equals(plugin.getModuleId()) ) {
+				this.context.setAttribute("EARLY_PLUGIN_INIT", Boolean.valueOf(true));
+				this.connectPlugin(plugin);
+				this.context.removeAttribute("EARLY_PLUGIN_INIT");
+			}
+		}
+	}
+	
 	public void connectEnabled() {
 		for(TGPlugin plugin : this.plugins) {
 			if( this.isEnabled(plugin.getModuleId()) ) {

@@ -28,7 +28,9 @@ public class MacMenuPlugin implements TGPlugin {
 	}
 	
 	public void connect(TGContext context) throws TGPluginException {
-		this.setEnabled(context, true);
+		if (!Boolean.TRUE.equals(context.getAttribute("EARLY_PLUGIN_INIT"))) {
+			this.setEnabled(context, true);
+		}
 	}
 
 	public void disconnect(TGContext context) throws TGPluginException {

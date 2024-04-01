@@ -132,6 +132,10 @@ public class TuxGuitar {
 	}
 	
 	private void startUIContext(URL url) {		
+		// DIRTY HACK for prototyping, early init of macOS-specific plugin to open doc
+		this.getPluginManager().earlyConnectMacOpenFilePlugin();
+		
+		
 		TGWindow.getInstance(TuxGuitar.this.context).createWindow();
 		
 		// Priority 3 ----------------------------------------------//
