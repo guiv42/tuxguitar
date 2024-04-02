@@ -114,6 +114,10 @@ public class TuxGuitar {
 	
 	private void createUIContext(final URL url) {
 		TGSynchronizer.getInstance(this.context).setController(new TGSynchronizerControllerImpl(this.context));
+		
+		// TODO: try to move this statement at different places in init process...
+		getPluginManager().earlyInitPlugins();
+		
 		TGApplication.getInstance(TuxGuitar.this.context).getApplication().start(new Runnable() {
 			public void run() {
 				// display splash screen
@@ -131,10 +135,7 @@ public class TuxGuitar {
 		});
 	}
 	
-	private void startUIContext(URL url) {		
-		// DIRTY HACK for prototyping, early init of macOS-specific plugin to open doc
-		this.getPluginManager().earlyConnectMacOpenFilePlugin();
-		
+	private void startUIContext(URL url) {
 		
 		TGWindow.getInstance(TuxGuitar.this.context).createWindow();
 		

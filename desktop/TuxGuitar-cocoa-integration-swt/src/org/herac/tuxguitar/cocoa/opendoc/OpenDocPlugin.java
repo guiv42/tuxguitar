@@ -2,10 +2,10 @@ package org.herac.tuxguitar.cocoa.opendoc;
 
 import org.herac.tuxguitar.cocoa.TGCocoaIntegrationPlugin;
 import org.herac.tuxguitar.util.TGContext;
-import org.herac.tuxguitar.util.plugin.TGPlugin;
+import org.herac.tuxguitar.util.plugin.TGEarlyInitPlugin;
 import org.herac.tuxguitar.util.plugin.TGPluginException;
 
-public class OpenDocPlugin implements TGPlugin {
+public class OpenDocPlugin implements TGEarlyInitPlugin {
 	
 	private OpenDocListener openDocListener;
 	
@@ -13,23 +13,19 @@ public class OpenDocPlugin implements TGPlugin {
 		return TGCocoaIntegrationPlugin.MODULE_ID;
 	}
 	
-	public void connect(TGContext context) throws TGPluginException {
-		try {
-			if( this.openDocListener == null ){
-				this.openDocListener = new OpenDocListener();
-			}
-			if (Boolean.TRUE.equals(context.getAttribute("EARLY_PLUGIN_INIT"))) {
-				this.openDocListener.init();
-			} else {
-				this.openDocListener.process();
-			}
-		} catch( Throwable throwable ){
-			throw new TGPluginException( throwable );
+	public void earlyInit() throws TGPluginException {
+		if( this.openDocListener != null ) {
+			this.openDocListener.disconnect();
 		}
-		
+		this.openDocListener = new OpenDocListener();
+	}
+	
+	public void connect(TGContext context) throws TGPluginException {
+		this.openDocListener.process();
 	}
 
 	public void disconnect(TGContext context) throws TGPluginException {
 		this.openDocListener.disconnect();
 	}
+
 }

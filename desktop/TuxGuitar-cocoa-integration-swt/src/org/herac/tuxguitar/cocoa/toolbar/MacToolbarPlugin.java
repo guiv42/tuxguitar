@@ -16,18 +16,16 @@ public class MacToolbarPlugin implements TGPlugin {
 	}
 	
 	public void connect(TGContext context) throws TGPluginException {
-		if (!Boolean.TRUE.equals(context.getAttribute("EARLY_PLUGIN_INIT"))) {
-			try {
-				if( this.macToolbar != null ){
-					this.macToolbar.setEnabled(true);
-				 }else {
-					this.macToolbar = new MacToolbar();
-					this.macToolbar.setEnabled(true);
-					this.macToolbar.init(((SWTWindow) TGWindow.getInstance(context).getWindow()).getControl());
-				}
-			} catch( Throwable throwable ){
-				throw new TGPluginException( throwable );
+		try {
+			if( this.macToolbar != null ){
+				this.macToolbar.setEnabled(true);
+			 }else {
+				this.macToolbar = new MacToolbar();
+				this.macToolbar.setEnabled(true);
+				this.macToolbar.init(((SWTWindow) TGWindow.getInstance(context).getWindow()).getControl());
 			}
+		} catch( Throwable throwable ){
+			throw new TGPluginException( throwable );
 		}
 	}
 
