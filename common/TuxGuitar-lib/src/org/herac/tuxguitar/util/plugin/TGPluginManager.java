@@ -22,11 +22,13 @@ public class TGPluginManager {
 	
 	private TGContext context;
 	private List<TGPlugin> plugins;
+	private boolean allEnabledInitialized;
 	
 	private TGPluginManager(TGContext context){
 		this.context = context;
 		this.plugins = new ArrayList<TGPlugin>();
 		this.lookupPlugins();
+		this.allEnabledInitialized = false;
 	}
 	
 	public List<TGPlugin> getPlugins(){
@@ -58,6 +60,7 @@ public class TGPluginManager {
 		for(TGPlugin plugin : this.plugins) {
 			this.disconnectPlugin(plugin);
 		}
+		this.allEnabledInitialized = false;
 	}
 	
 	public void connectEnabled() {
@@ -66,6 +69,7 @@ public class TGPluginManager {
 				this.connectPlugin(plugin);
 			}
 		}
+		this.allEnabledInitialized = true;
 	}
 	
 	public void earlyInitPlugins() {
@@ -144,6 +148,10 @@ public class TGPluginManager {
 			TGErrorManager.getInstance(this.context).handleError(new TGPluginException(PLUGIN_ERROR_ON_GET_STATUS,throwable));
 		}
 		return false;
+	}
+	
+	public boolean allEnabledPluginsInitialized() {
+		return this.allEnabledInitialized;
 	}
 	
 	@SuppressWarnings("unchecked")

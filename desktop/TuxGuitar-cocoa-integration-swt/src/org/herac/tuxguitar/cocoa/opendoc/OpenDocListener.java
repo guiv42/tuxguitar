@@ -8,22 +8,43 @@ import org.eclipse.swt.widgets.Listener;
 import org.herac.tuxguitar.app.TuxGuitar;
 import org.herac.tuxguitar.app.action.impl.file.TGReadURLAction;
 import org.herac.tuxguitar.editor.action.TGActionProcessor;
+import org.herac.tuxguitar.util.TGContext;
+import org.herac.tuxguitar.util.plugin.TGPluginManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OpenDocListener implements Listener {
-	
+
 	private List<String> eventsText;
 	private boolean enabled;
-	
-	public OpenDocListener(){
+	private TGPluginManager pluginManager;
+
+	public OpenDocListener(TGContext context){
 		this.eventsText = new ArrayList<String>();
 		this.enabled = false;
+		this.pluginManager = TGPluginManager.getInstance(context);
 		Display.getCurrent().addListener(SWT.OpenDocument, this);
 	}
-	
+
 	public void process() {
+		// need to wait for all other plugins to be initialized, or openDoc may fail
+		if (!pluginManager.allEnabledPluginsInitialized()) {
+			new Thread() {
+				public void run() {
+					try {
+						while (!pluginManager.allEnabledPluginsInitialized()) {
+							Thread.sleep(50);
+						}
+						process();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}.start();
+			return;
+		}
+
 		this.enabled = true;
 		TuxGuitar.getInstance().getPlayer().reset();
 		TGActionProcessor tgActionProcessor = new TGActionProcessor(TuxGuitar.getInstance().getContext(), TGReadURLAction.NAME);
@@ -39,7 +60,7 @@ public class OpenDocListener implements Listener {
 			}
 		}
 	}
-	
+
 	public void disconnect() {
 		this.enabled = false;
 		Display.getCurrent().removeListener(SWT.OpenDocument, this);
