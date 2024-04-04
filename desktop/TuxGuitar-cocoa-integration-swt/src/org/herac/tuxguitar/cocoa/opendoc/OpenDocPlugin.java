@@ -4,6 +4,7 @@ import org.herac.tuxguitar.cocoa.TGCocoaIntegrationPlugin;
 import org.herac.tuxguitar.util.TGContext;
 import org.herac.tuxguitar.util.plugin.TGEarlyInitPlugin;
 import org.herac.tuxguitar.util.plugin.TGPluginException;
+import org.herac.tuxguitar.app.TuxGuitar;
 
 public class OpenDocPlugin implements TGEarlyInitPlugin {
 	
@@ -17,7 +18,7 @@ public class OpenDocPlugin implements TGEarlyInitPlugin {
 		if( this.openDocListener != null ) {
 			this.openDocListener.disconnect();
 		}
-		this.openDocListener = new OpenDocListener();
+		this.openDocListener = new OpenDocListener(TuxGuitar.getInstance().getContext());
 	}
 	
 	public void connect(TGContext context) throws TGPluginException {
