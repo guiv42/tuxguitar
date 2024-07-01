@@ -123,7 +123,7 @@ public class TGTransportDialog implements TGEventListener {
 			}
 		});
 		TGDialogUtil.openDialog(this.dialog, TGDialogUtil.OPEN_STYLE_CENTER | TGDialogUtil.OPEN_STYLE_PACK);
-		this.dialog.layout();
+		this.loadIconsProcess.process();
 	}
 	
 	public void addListeners(){
