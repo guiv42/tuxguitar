@@ -136,7 +136,10 @@ public abstract class TGTrack {
 	}
 	
 	public void setChannelId(int channelId) {
-		this.channelId = channelId;
+		// channelId is stored in binary TuxGuitar files as a (signed) short, avoid overflow
+		if (channelId == (channelId & 0x7FFF)) {
+			this.channelId = channelId;
+		}
 	}
 	
 	public boolean isPercussion() {

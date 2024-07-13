@@ -1,0 +1,5 @@
+### Plugin Information ###
+plugin.name=dev-fileformat
+plugin.description=temporary, for development of a new file format for tablature files
+plugin.author=guiv42
+plugin.version=1.0

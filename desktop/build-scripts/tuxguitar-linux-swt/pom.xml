@@ -41,6 +41,7 @@
 		<module>../../../common/TuxGuitar-midi</module>
 		<module>../../TuxGuitar-midi-ui</module>
 		<module>../../TuxGuitar-musicxml</module>
+		<module>../../dev-fileformat</module>
 		<module>../../TuxGuitar-awt-graphics</module>
 		<module>../../../common/TuxGuitar-pdf</module>
 		<module>../../TuxGuitar-pdf-ui</module>
@@ -239,6 +240,12 @@
 									<groupId>${project.groupId}</groupId>
 									<artifactId>tuxguitar-musicxml</artifactId>
 									<destFileName>tuxguitar-musicxml.jar</destFileName>
+									<outputDirectory>${project.build.directory}/${project.finalName}/share/plugins</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>dev-fileformat</artifactId>
+									<destFileName>dev-fileformat.jar</destFileName>
 									<outputDirectory>${project.build.directory}/${project.finalName}/share/plugins</outputDirectory>
 								</artifactItem>
 								<artifactItem>

@@ -38,8 +38,10 @@ public abstract class TGEffectBend {
 	}
 	
 	public void addPoint(int position,int value){
-		this.points.add(new BendPoint(position,value));
-		updateMovements();
+		if (position >= 0 && position <= MAX_POSITION_LENGTH && value >= 0 && value <= MAX_VALUE_LENGTH) {
+			this.points.add(new BendPoint(position,value));
+			updateMovements();
+		}
 	}
 	
 	public List<BendPoint> getPoints(){

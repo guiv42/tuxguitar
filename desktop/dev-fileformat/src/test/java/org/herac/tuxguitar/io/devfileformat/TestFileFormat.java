@@ -1,0 +1,454 @@
+package org.herac.tuxguitar.io.devfileformat;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+
+import org.herac.tuxguitar.io.base.TGFileFormat;
+import org.herac.tuxguitar.io.base.TGFileFormatUtils;
+import org.herac.tuxguitar.io.base.TGSongReaderHandle;
+import org.herac.tuxguitar.io.base.TGSongWriterHandle;
+import org.herac.tuxguitar.song.factory.TGFactory;
+import org.herac.tuxguitar.song.models.TGBeat;
+import org.herac.tuxguitar.song.models.TGChannel;
+import org.herac.tuxguitar.song.models.TGChannelParameter;
+import org.herac.tuxguitar.song.models.TGChord;
+import org.herac.tuxguitar.song.models.TGDivisionType;
+import org.herac.tuxguitar.song.models.TGDuration;
+import org.herac.tuxguitar.song.models.TGMarker;
+import org.herac.tuxguitar.song.models.TGMeasure;
+import org.herac.tuxguitar.song.models.TGMeasureHeader;
+import org.herac.tuxguitar.song.models.TGNote;
+import org.herac.tuxguitar.song.models.TGNoteEffect;
+import org.herac.tuxguitar.song.models.TGSong;
+import org.herac.tuxguitar.song.models.TGStroke;
+import org.herac.tuxguitar.song.models.TGTrack;
+import org.herac.tuxguitar.song.models.TGVoice;
+import org.herac.tuxguitar.song.models.effects.TGEffectBend;
+import org.herac.tuxguitar.song.models.effects.TGEffectGrace;
+import org.herac.tuxguitar.song.models.effects.TGEffectHarmonic;
+import org.herac.tuxguitar.song.models.effects.TGEffectTremoloBar;
+import org.herac.tuxguitar.song.models.effects.TGEffectTremoloPicking;
+import org.herac.tuxguitar.song.models.effects.TGEffectTrill;
+import org.junit.jupiter.api.Test;
+
+class TestFileFormat {
+	
+	@Test
+	void recognizeValidFile() throws FileNotFoundException {
+		assertTrue(validatesSchema("test.xml"));
+	}
+	
+	@Test
+	void xmlCanBeExtended() throws FileNotFoundException {
+		assertTrue(validatesSchema("test_extended.xml"));
+	}
+	
+	@Test
+	void invalidFile() throws FileNotFoundException {
+		// invalid version
+		assertFalse(validatesSchema("versionKO.xml"));
+		
+		// not even an xml file (just random bytes)
+		assertFalse(validatesSchema("randomBytes.xml"));
+	}
+	
+	@Test
+	void openValidFile() throws IOException {
+		TGSongReaderHandle handle = new TGSongReaderHandle();
+		handle.setInputStream(getClass().getClassLoader().getResource("test.xml").openStream());
+		handle.setFactory(new TGFactory());
+		org.herac.tuxguitar.io.devfileformat.TGSongReaderImpl songReader = new TGSongReaderImpl();
+		songReader.read(handle);
+		TGSong song = handle.getSong();
+		assertEquals("TGSong.name", song.getName());
+		assertEquals("TGSong.artist", song.getArtist());
+		assertEquals("TGSong.album", song.getAlbum());
+		assertEquals("TGSong.author", song.getAuthor());
+		assertEquals("TGSong.date", song.getDate());
+		assertEquals("TGSong.copyright", song.getCopyright());
+		assertEquals("TGSong.writer", song.getWriter());
+		assertEquals("TGSong.transcriber", song.getTranscriber());
+		assertEquals("TGSong.comments\n2nd line", song.getComments());
+		assertEquals(2, song.countChannels());
+
+		TGChannel channel = song.getChannel(0);
+		assertEquals(1, channel.getChannelId());
+		assertEquals(0, channel.getBank());
+		assertEquals(25, channel.getProgram());
+		assertEquals(127, channel.getVolume());
+		assertEquals(64, channel.getBalance());
+		assertEquals(10, channel.getChorus());
+		assertEquals(20, channel.getReverb());
+		assertEquals(30, channel.getPhaser());
+		assertEquals(40, channel.getTremolo());
+		assertEquals("ChannelName", channel.getName());
+		Iterator<TGChannelParameter> parameters = channel.getParameters();
+		assertTrue(parameters.hasNext());
+		TGChannelParameter parameter = parameters.next();
+		assertEquals("param1.key", parameter.getKey());
+		assertEquals("param1.value", parameter.getValue());
+		assertTrue(parameters.hasNext());
+		parameter = parameters.next();
+		assertEquals("param2.key", parameter.getKey());
+		assertEquals("param2.value", parameter.getValue());
+		assertFalse(parameters.hasNext());
+
+		channel = song.getChannel(1);
+		assertEquals("ChannelName2", channel.getName());
+		parameters = channel.getParameters();
+		assertFalse(parameters.hasNext());
+		
+		// measure headers
+		Iterator<TGMeasureHeader> headers = song.getMeasureHeaders();
+		assertTrue(headers.hasNext());
+		// header 1
+		TGMeasureHeader header = headers.next();
+		assertEquals(song, header.getSong());
+		assertEquals(110, header.getTempo().getValue());
+		assertEquals(3, header.getTimeSignature().getNumerator());
+		assertEquals(8, header.getTimeSignature().getDenominator().getValue());
+		assertTrue(header.isRepeatOpen());
+		assertEquals(0, header.getRepeatClose());
+		assertEquals(0, header.getRepeatAlternative());
+		assertNull(header.getMarker());
+		assertEquals(TGMeasureHeader.TRIPLET_FEEL_NONE,header.getTripletFeel());
+		// header 2
+		assertTrue(headers.hasNext());
+		header = headers.next();
+		assertEquals(110, header.getTempo().getValue());
+		assertEquals(3, header.getTimeSignature().getNumerator());
+		assertEquals(8, header.getTimeSignature().getDenominator().getValue());
+		assertFalse(header.isRepeatOpen());
+		assertEquals(0, header.getRepeatClose());
+		assertEquals(5, header.getRepeatAlternative());
+		TGMarker marker = header.getMarker();
+		assertNotNull(marker);
+		assertEquals(2, marker.getMeasure());
+		assertEquals(marker.getTitle(), "header2.marker");
+		assertEquals(255, marker.getColor().getR());
+		assertEquals(1, marker.getColor().getG());
+		assertEquals(2, marker.getColor().getB());
+		assertEquals(2, marker.getMeasure());
+		assertEquals(TGMeasureHeader.TRIPLET_FEEL_NONE,header.getTripletFeel());
+		// header 3
+		assertTrue(headers.hasNext());
+		header = headers.next();
+		assertEquals(40, header.getTempo().getValue());
+		assertEquals(1, header.getRepeatClose());
+		assertEquals(TGMeasureHeader.TRIPLET_FEEL_EIGHTH,header.getTripletFeel());
+		// header 4
+		assertTrue(headers.hasNext());
+		header = headers.next();
+		// no more
+		assertFalse(headers.hasNext());
+		
+		// Track1
+		Iterator<TGTrack> tracks = song.getTracks();
+		assertTrue(tracks.hasNext());
+		TGTrack track = tracks.next();
+		assertEquals(song, track.getSong());
+		assertEquals(1, track.getNumber());
+		assertEquals(track.getName(), "Track1.name");
+		assertTrue(track.isSolo());
+		assertFalse(track.isMute());
+		assertEquals(1, track.getChannelId());
+		assertEquals(-1, track.getOffset());
+		assertEquals(10, track.getColor().getR());
+		assertEquals(20, track.getColor().getG());
+		assertEquals(30, track.getColor().getB());
+		assertEquals(3, track.stringCount());
+		assertEquals(200, track.getString(1).getValue());
+		assertEquals(100, track.getString(2).getValue());
+		assertEquals(50, track.getString(3).getValue());
+		assertEquals("test lyrics", track.getLyrics().getLyrics());
+		// track 1 measures
+		Iterator<TGMeasure> measures = track.getMeasures();
+		assertTrue(measures.hasNext());
+		TGMeasure measure = measures.next();
+		assertEquals(song.getMeasureHeader(0), measure.getHeader());
+		assertEquals(track, measure.getTrack());
+		assertEquals(1, measure.getNumber());
+		assertEquals(TGMeasure.CLEF_TREBLE, measure.getClef());
+		assertEquals(8, measure.getKeySignature());
+		// track1, measure 1, beat 1
+		List<TGBeat> beats = measure.getBeats();
+		assertEquals(1, beats.size());
+		TGBeat beat = beats.get(0);
+		assertEquals(960, beat.getStart());
+		assertEquals(measure, beat.getMeasure());
+		assertEquals(TGStroke.STROKE_UP, beat.getStroke().getDirection());
+		assertEquals(2, beat.getStroke().getValue());
+		TGChord chord = beat.getChord();
+		assertNotNull(chord);
+		assertEquals(beat, chord.getBeat());
+		assertEquals("Bm", chord.getName());
+		assertEquals(2, chord.getFirstFret());
+		assertEquals(6, chord.countStrings());
+		assertEquals(2, chord.getFretValue(0));
+		assertEquals(3, chord.getFretValue(1));
+		assertEquals(4, chord.getFretValue(2));
+		assertEquals(4, chord.getFretValue(3));
+		assertEquals(2, chord.getFretValue(4));
+		assertEquals(-1, chord.getFretValue(5));
+		assertEquals("Beat1.text", beat.getText().getValue());
+		// track1, measure 1, beat1, voice 1
+		assertEquals(2, beat.countVoices());
+		TGVoice voice = beat.getVoice(0);
+		assertEquals(beat, voice.getBeat());
+		assertEquals(0, voice.getIndex());
+		assertEquals(TGDuration.EIGHTH, voice.getDuration().getValue());
+		assertFalse(voice.getDuration().isDotted());
+		assertTrue(voice.getDuration().isDoubleDotted());
+		assertEquals(TGDivisionType.NORMAL.getEnters(), voice.getDuration().getDivision().getEnters());
+		assertEquals(TGDivisionType.NORMAL.getTimes(), voice.getDuration().getDivision().getTimes());
+		// track1, measure 1, beat1, voice 1, note 1
+		assertFalse(voice.isEmpty());
+		List<TGNote> notes = voice.getNotes();
+		assertEquals(6, notes.size());
+		TGNote note = notes.get(0);
+		assertEquals(voice, note.getVoice());
+		assertEquals(12, note.getValue());
+		assertEquals(90, note.getVelocity());
+		assertEquals(1, note.getString());
+		assertFalse(note.isTiedNote());
+		TGNoteEffect effect = note.getEffect();
+		assertTrue(effect.isVibrato());
+		assertTrue(effect.isDeadNote());
+		assertFalse(effect.isSlide());
+		assertFalse(effect.isHammer());
+		assertTrue(effect.isGhostNote());
+		assertFalse(effect.isAccentuatedNote());
+		assertFalse(effect.isHeavyAccentuatedNote());
+		assertFalse(effect.isPalmMute());
+		assertFalse(effect.isStaccato());
+		assertFalse(effect.isTapping());
+		assertFalse(effect.isSlapping());
+		assertFalse(effect.isPopping());
+		assertFalse(effect.isFadeIn());
+		assertFalse(effect.isLetRing());
+		assertFalse(effect.isBend());
+		// track1, measure 1, beat1, voice 1, note 2
+		note = notes.get(1);
+		assertEquals(voice, note.getVoice());
+		assertEquals(1, note.getValue());
+		assertEquals(90, note.getVelocity());
+		assertEquals(2, note.getString());
+		assertTrue(note.isTiedNote());
+		effect = note.getEffect();
+		assertFalse(effect.isVibrato());
+		assertFalse(effect.isDeadNote());
+		assertFalse(effect.isGhostNote());
+		assertFalse(effect.isSlide());
+		assertFalse(effect.isHammer());
+		assertFalse(effect.isAccentuatedNote());
+		assertTrue(effect.isHeavyAccentuatedNote());
+		assertFalse(effect.isPalmMute());
+		assertFalse(effect.isStaccato());
+		assertFalse(effect.isTapping());
+		assertFalse(effect.isSlapping());
+		assertFalse(effect.isPopping());
+		assertFalse(effect.isFadeIn());
+		assertFalse(effect.isLetRing());
+		assertFalse(effect.isBend());
+		// track1, measure 1, beat1, voice 1, note 3
+		note = notes.get(2);
+		effect = note.getEffect();
+		assertTrue(effect.isBend());
+		TGEffectBend bend = note.getEffect().getBend();
+		assertNotNull(bend);
+		assertEquals(2, bend.getPoints().size());
+		assertEquals(1, bend.getPoints().get(0).getPosition());
+		assertEquals(2, bend.getPoints().get(0).getValue());
+		assertEquals(3, bend.getPoints().get(1).getPosition());
+		assertEquals(4, bend.getPoints().get(1).getValue());
+		// track1, measure 1, beat1, voice 1, note 4
+		note = notes.get(3);
+		effect = note.getEffect();
+		assertTrue(effect.isTremoloBar());
+		TGEffectTremoloBar tremoloBar = effect.getTremoloBar();
+		assertNotNull(tremoloBar);
+		assertEquals(2, tremoloBar.getPoints().size());
+		assertEquals(5, tremoloBar.getPoints().get(0).getPosition());
+		assertEquals(6, tremoloBar.getPoints().get(0).getValue());
+		assertEquals(7, tremoloBar.getPoints().get(1).getPosition());
+		assertEquals(8, tremoloBar.getPoints().get(1).getValue());
+		// track1, measure 1, beat1, voice 1, note 5
+		note = notes.get(4);
+		effect = note.getEffect();
+		assertTrue(effect.isHarmonic());
+		TGEffectHarmonic harmonic = effect.getHarmonic();
+		assertNotNull(harmonic);
+		assertEquals(TGEffectHarmonic.TYPE_ARTIFICIAL, harmonic.getType());
+		assertEquals(12, harmonic.getData());
+		// track1, measure 1, beat1, voice 1, note 6
+		note = notes.get(5);
+		effect = note.getEffect();
+		assertTrue(effect.isGrace());
+		TGEffectGrace grace = effect.getGrace();
+		assertNotNull(grace);
+		assertEquals(5, grace.getFret());
+		assertEquals(1, grace.getDuration());
+		assertEquals(50, grace.getDynamic());
+		assertEquals(TGEffectGrace.TRANSITION_SLIDE, grace.getTransition());
+		assertTrue(grace.isOnBeat());
+		assertFalse(grace.isDead());
+		
+		// track1, measure 1, beat1, voice 2
+		voice = beat.getVoice(1);
+		assertEquals(beat, voice.getBeat());
+		assertEquals(1, voice.getIndex());
+		assertEquals(TGDuration.HALF, voice.getDuration().getValue());
+		assertFalse(voice.getDuration().isDotted());
+		assertFalse(voice.getDuration().isDoubleDotted());
+		assertEquals(TGDivisionType.DIVISION_TYPES[1].getEnters(), voice.getDuration().getDivision().getEnters());
+		assertEquals(TGDivisionType.DIVISION_TYPES[1].getTimes(), voice.getDuration().getDivision().getTimes());
+		assertFalse(voice.isEmpty());
+		
+		// track 1, other measures
+		for (int i=0; i<3; i++) {
+			assertTrue(measures.hasNext());
+			measure = measures.next();
+			assertEquals(i+2, measure.getNumber());
+		}
+		assertFalse(measures.hasNext());
+		
+		// Track2
+		assertTrue(tracks.hasNext());
+		track = tracks.next();
+		assertEquals(2, track.getNumber());
+		assertEquals(track.getName(), "Track2.name");
+		assertFalse(track.isSolo());
+		assertFalse(track.isMute());
+		assertEquals(2, track.getChannelId());
+		assertEquals(0, track.getOffset());
+		assertEquals(21, track.getColor().getR());
+		assertEquals(22, track.getColor().getG());
+		assertEquals(23, track.getColor().getB());
+		effect = track.getMeasure(0).getBeat(0).getVoice(0).getNote(0).getEffect();
+		assertTrue(effect.isTrill());
+		TGEffectTrill trill = effect.getTrill();
+		assertNotNull(trill);
+		assertEquals(3, trill.getFret());
+		assertEquals(32, trill.getDuration().getValue());
+		effect = track.getMeasure(0).getBeat(0).getVoice(0).getNote(1).getEffect();
+		assertTrue(effect.isTremoloPicking());
+		TGEffectTremoloPicking tremoloPicking = effect.getTremoloPicking();
+		assertNotNull(tremoloPicking);
+		assertEquals(16, tremoloPicking.getDuration().getValue());
+		
+		// no more tracks
+		assertFalse(tracks.hasNext());
+	}
+	
+	@Test
+	public void writtenFileValidatesSchema() throws FileNotFoundException, Throwable {
+		assertTrue(validatesSchema(new ByteArrayInputStream(tgToXml("Untitled.tg"))));
+		assertTrue(validatesSchema(new ByteArrayInputStream(tgToXml("reference.tg"))));
+	}
+	
+	@Test
+	/* important note: to succeed, file provided to this test MUST have been written by TuxGuitar version >= 1.6.3
+	 * version 1.6.3 introduced a modification (79512b9): keySignature is NOT stored for percussion tracks (meaningless) 
+	 * binary comparison between .tg files written by versions before and after 1.6.3 already fails
+	 */
+	public void fileFormatEquivalence() throws FileNotFoundException, Throwable {
+		assertTrue(xmlFileIsEquivalent("Untitled.tg"));
+		// "reference" file is a .tg file containing many (all?) different elements of a TuxGuitar file
+		// i.e. song attributes, channels, measureHeaders, tracks, measures, voices, notes, effects, ...
+		assertTrue(xmlFileIsEquivalent("reference.tg"));
+	}
+	
+	/* check file format equivalence:
+	 * - import .tg file into song
+	 * - save song as .xml
+	 * - import .xml into song
+	 * - save song as .tg
+	 * - compare with original .tg file, shall be identical
+	 */
+	private boolean xmlFileIsEquivalent(String resourceFileName) throws FileNotFoundException, Throwable {
+		TGFactory factory = new TGFactory();
+		// load original tg file
+		File original = new File(getClass().getClassLoader().getResource(resourceFileName).getFile());
+		byte[] bufferOriginal = TGFileFormatUtils.getBytes(new FileInputStream(original));
+		TGSongReaderHandle handleRead = new TGSongReaderHandle();
+		handleRead.setFactory(factory);
+		handleRead.setInputStream(new ByteArrayInputStream(bufferOriginal));
+		new org.herac.tuxguitar.io.tg.TGSongReaderImpl().read(handleRead);
+		
+		// save song under xml format in byte buffer
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TGSongWriterHandle handleWrite = new TGSongWriterHandle();
+		handleWrite.setFactory(factory);
+		handleWrite.setSong(handleRead.getSong());
+		handleWrite.setOutputStream(outputStream);
+		new org.herac.tuxguitar.io.devfileformat.TGSongWriterImpl().write(handleWrite);
+		
+		// load xml format
+		handleRead.setSong(null);
+		byte[] bufferXml = outputStream.toByteArray();
+		handleRead.setInputStream(new ByteArrayInputStream(bufferXml));
+		new org.herac.tuxguitar.io.devfileformat.TGSongReaderImpl().read(handleRead);
+		
+		// save under tg format in byte buffer
+		outputStream = new ByteArrayOutputStream();
+		handleWrite.setSong(handleRead.getSong());
+		handleWrite.setOutputStream(outputStream);
+		handleWrite.setFormat(org.herac.tuxguitar.io.tg.TGStream.TG_FORMAT);
+		new org.herac.tuxguitar.io.tg.TGSongWriterImpl().write(handleWrite);
+		byte[] bufferFinal = outputStream.toByteArray();
+		
+		// compare
+		if (bufferFinal.length != bufferOriginal.length) {
+			return false;
+		}
+		for (int i=0; i<bufferOriginal.length; i++) {
+			if (bufferFinal[i] != bufferFinal[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private byte[] tgToXml(String resourceFileName) throws FileNotFoundException, Throwable {
+		TGFactory factory = new TGFactory();
+		// load original tg file
+		File original = new File(getClass().getClassLoader().getResource(resourceFileName).getFile());
+		byte[] bufferOriginal = TGFileFormatUtils.getBytes(new FileInputStream(original));
+		TGSongReaderHandle handleRead = new TGSongReaderHandle();
+		handleRead.setFactory(factory);
+		handleRead.setInputStream(new ByteArrayInputStream(bufferOriginal));
+		new org.herac.tuxguitar.io.tg.TGSongReaderImpl().read(handleRead);
+		
+		// save song under xml format in byte buffer
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TGSongWriterHandle handleWrite = new TGSongWriterHandle();
+		handleWrite.setFactory(factory);
+		handleWrite.setSong(handleRead.getSong());
+		handleWrite.setOutputStream(outputStream);
+		new org.herac.tuxguitar.io.devfileformat.TGSongWriterImpl().write(handleWrite);
+		
+		return outputStream.toByteArray();
+
+	}
+
+	
+	private boolean validatesSchema(InputStream inputStream) {
+		TGFileFormatDetectorImpl formatDetector = new TGFileFormatDetectorImpl();
+		TGFileFormat format = formatDetector.getFileFormat(inputStream); 
+		return (format != null);
+	}
+	
+	private boolean validatesSchema(String resourceFileName) throws FileNotFoundException {
+		File xml = new File(getClass().getClassLoader().getResource(resourceFileName).getFile());
+		return validatesSchema(new FileInputStream(xml));
+	}
+}

@@ -104,7 +104,10 @@ public abstract class TGDuration {
 	}
 	
 	public void setValue(int value) {
-		this.value = value;
+		// duration value is stored in binary TuxGuitar files as a byte, avoid overflow
+		if (value == (value & 0xFF)) {
+			this.value = value;
+		}
 	}
 	
 	public boolean isDotted() {

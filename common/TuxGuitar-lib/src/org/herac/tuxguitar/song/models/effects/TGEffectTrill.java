@@ -18,7 +18,10 @@ public abstract class TGEffectTrill {
 	}
 	
 	public void setFret(int fret) {
-		this.fret = fret;
+		// TuxGuitar binary file formats stores fret under byte format, avoid overflow
+		if (fret == (fret & 0xFF)) {
+			this.fret = fret;
+		}
 	}
 	
 	public TGDuration getDuration() {

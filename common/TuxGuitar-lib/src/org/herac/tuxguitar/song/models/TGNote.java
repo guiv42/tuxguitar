@@ -34,7 +34,10 @@ public abstract class TGNote implements Comparable<TGNote>{
 	}
 	
 	public void setValue(int value) {
-		this.value = value;
+		// value is stored in binary TuxGuitar files as a byte, avoid overflow
+		if (value == (value & 0xFF)) {
+			this.value = value;
+		}
 	}
 	
 	public int getVelocity() {
@@ -42,7 +45,10 @@ public abstract class TGNote implements Comparable<TGNote>{
 	}
 	
 	public void setVelocity(int velocity) {
-		this.velocity = velocity;
+		// velocity is stored in binary TuxGuitar files as a byte, avoid overflow
+		if (velocity == (velocity & 0xFF)) {
+			this.velocity = velocity;
+		}
 	}
 	
 	public int getString() {
@@ -50,7 +56,10 @@ public abstract class TGNote implements Comparable<TGNote>{
 	}
 	
 	public void setString(int string) {
-		this.string = string;
+		// string is stored in binary TuxGuitar files as a byte, avoid overflow
+		if (string == (string & 0xFF)) {
+			this.string = string;
+		}
 	}
 	
 	public boolean isTiedNote() {

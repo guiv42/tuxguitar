@@ -53,7 +53,7 @@ public class TGSongReaderHelper extends TGSongPersistenceHelper {
 			handle.setInputStream(new ByteArrayInputStream(buffer));
 			TGFileFormat fileFormat = detector.getFileFormat(handle.getInputStream());
 			
-			if( fileFormat != null ) {
+			if( (fileFormat != null) && fileFormat.canRecognizeByContent() ) {
 				return fileFormat;
 			}
 		}
@@ -61,7 +61,7 @@ public class TGSongReaderHelper extends TGSongPersistenceHelper {
 		String mimeType = handle.getContext().getAttribute(ATTRIBUTE_MIME_TYPE);
 		if( mimeType != null ) {
 			TGFileFormat fileFormat = fileFormatManager.findReaderFileFormatByMimeType(mimeType);
-			if( fileFormat != null ) {
+			if( (fileFormat != null) && fileFormat.canRecognizeByMimeType() ) {
 				return fileFormat;
 			}
 		}
@@ -69,7 +69,7 @@ public class TGSongReaderHelper extends TGSongPersistenceHelper {
 		String formatCode = handle.getContext().getAttribute(ATTRIBUTE_FORMAT_CODE);
 		if( formatCode != null ) {
 			TGFileFormat fileFormat = fileFormatManager.findReaderFileFormatByCode(formatCode);
-			if( fileFormat != null ) {
+			if( (fileFormat != null) && fileFormat.canRecognizeByFileExtension() ) {
 				return fileFormat;
 			}
 		}

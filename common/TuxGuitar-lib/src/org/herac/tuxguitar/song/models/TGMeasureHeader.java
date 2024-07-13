@@ -58,7 +58,10 @@ public abstract class TGMeasureHeader {
 	}
 	
 	public void setRepeatClose(int repeatClose) {
-		this.repeatClose = repeatClose;
+		// repeatClose is stored in binary TuxGuitar files as a (signed) short, avoid overflow
+		if (repeatClose == (repeatClose & 0x7FFF)) {
+			this.repeatClose = repeatClose;
+		}
 	}
 	
 	public int getRepeatAlternative() {
@@ -94,7 +97,10 @@ public abstract class TGMeasureHeader {
 	}
 	
 	public void setTripletFeel(int tripletFeel) {
-		this.tripletFeel = tripletFeel;
+		// tripletFeel is stored in binary TuxGuitar files as a byte, avoid overflow
+		if (tripletFeel == (tripletFeel & 0xFF)) {
+			this.tripletFeel = tripletFeel;
+		}
 	}
 	
 	public TGTempo getTempo() {

@@ -28,7 +28,10 @@ public abstract class TGTempo {
 	}
 	
 	public void setValue(int value) {
-		this.value = value;
+		// value is stored in binary TuxGuitar files as a (signed) short, avoid overflow
+		if (value == (value & 0x7FFF)) {
+			this.value = value;
+		}
 	}
 	
 	public long getInMillis(){

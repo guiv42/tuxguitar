@@ -186,6 +186,12 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
+				<artifactId>dev-fileformat</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>tuxguitar-pdf</artifactId>
 				<version>${project.version}</version>
 				<type>jar</type>

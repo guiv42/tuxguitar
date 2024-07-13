@@ -51,7 +51,10 @@ public abstract class TGDivisionType {
 	}
 	
 	public void setEnters(int enters) {
-		this.enters = enters;
+		// enters is stored in binary TuxGuitar file as a byte, avoid overflow
+		if (enters == (enters & 0xFF)) {
+			this.enters = enters;
+		}
 	}
 	
 	public int getTimes() {
@@ -59,7 +62,10 @@ public abstract class TGDivisionType {
 	}
 	
 	public void setTimes(int times) {
-		this.times = times;
+		// times is stored in binary TuxGuitar file as a byte, avoid overflow
+		if (times == (times & 0xFF)) {
+			this.times = times;
+		}
 	}
 	
 	public long convertTime(long time){

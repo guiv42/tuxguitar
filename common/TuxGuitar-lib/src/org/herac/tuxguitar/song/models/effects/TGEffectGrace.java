@@ -43,7 +43,10 @@ public abstract class TGEffectGrace {
 	}
 	
 	public void setDuration(int duration) {
-		this.duration = duration;
+		// TuxGuitar binary file format stores duration under byte format, avoid overflow
+		if (duration == (duration & 0xFF)) {
+			this.duration = duration;
+		}
 	}
 	
 	public int getDynamic() {
@@ -51,7 +54,10 @@ public abstract class TGEffectGrace {
 	}
 	
 	public void setDynamic(int dynamic) {
-		this.dynamic = dynamic;
+		// TuxGuitar binary file format stores dynamic under byte format, avoid overflow
+		if (dynamic == (dynamic & 0xFF)) {
+			this.dynamic = dynamic;
+		}
 	}
 	
 	public int getFret() {
@@ -59,7 +65,10 @@ public abstract class TGEffectGrace {
 	}
 	
 	public void setFret(int fret) {
-		this.fret = fret;
+		// TuxGuitar binary file format stores fret under byte format, avoid overflow
+		if (fret == (fret & 0xFF)) {
+			this.fret = fret;
+		}
 	}
 	
 	public boolean isOnBeat() {
@@ -75,7 +84,9 @@ public abstract class TGEffectGrace {
 	}
 	
 	public void setTransition(int transition) {
-		this.transition = transition;
+		if (transition==TRANSITION_NONE || transition==TRANSITION_SLIDE || transition==TRANSITION_BEND || transition==TRANSITION_HAMMER) {
+			this.transition = transition;
+		}
 	}
 	
 	public int getDurationTime(){

@@ -30,7 +30,9 @@ public abstract class TGEffectTremoloBar {
 	}
 	
 	public void addPoint(int position,int value){
-		this.points.add(new TremoloBarPoint(position,value));
+		if (position >= 0 && position <= MAX_POSITION_LENGTH && value >= 0 && value <= MAX_VALUE_LENGTH) {
+			this.points.add(new TremoloBarPoint(position,value));
+		}
 	}
 	
 	public List<TremoloBarPoint> getPoints(){

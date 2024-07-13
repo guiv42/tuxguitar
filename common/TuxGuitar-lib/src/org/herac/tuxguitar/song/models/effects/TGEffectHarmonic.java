@@ -52,7 +52,10 @@ public abstract class TGEffectHarmonic {
 	}
 	
 	public void setData(int data) {
-		this.data = data;
+		// TuxGuitar binary file formats store data under byte format, avoid overflow
+		if (data == (data & 0xFF)) {
+			this.data = data;
+		}
 	}
 	
 	public int getType() {
