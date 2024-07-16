@@ -33,5 +33,10 @@
     		<version>5.9.2</version>
     		<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.herac.tuxguitar</groupId>
+			<artifactId>tuxguitar</artifactId>
+			<version>9.99-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

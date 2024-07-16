@@ -1,2 +1,3 @@
 org.herac.tuxguitar.io.devfileformat.TGNewFormatReaderPlugin
 org.herac.tuxguitar.io.devfileformat.TGNewFormatWriterPlugin
+org.herac.tuxguitar.io.devfileformat.TGNewerFormatReaderPlugin

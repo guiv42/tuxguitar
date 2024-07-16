@@ -1,7 +1,14 @@
 package org.herac.tuxguitar.io.devfileformat;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.herac.tuxguitar.io.base.TGFileFormat;
+import org.herac.tuxguitar.io.base.TGFileFormatException;
 import org.herac.tuxguitar.song.models.TGMeasure;
 import org.herac.tuxguitar.song.models.TGMeasureHeader;
 import org.herac.tuxguitar.song.models.TGStroke;
@@ -9,6 +16,8 @@ import org.herac.tuxguitar.song.models.TGVoice;
 import org.herac.tuxguitar.song.models.effects.TGEffectGrace;
 import org.herac.tuxguitar.song.models.effects.TGEffectHarmonic;
 import org.herac.tuxguitar.util.TGVersion;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /* this class hosts everything common to read/write tg file operations */
 
@@ -19,13 +28,13 @@ public class TGStream {
 	protected static final TGVersion FILE_FORMAT_TGVERSION = new TGVersion(2,0,0);
 	
 	public static final String TG_FORMAT_NAME = ("TuxGuitar File Format");
-	public static final String TG_FORMAT_VERSION = (TG_FORMAT_NAME + " - " + FILE_FORMAT_TGVERSION.getVersion() );
 	public static final String TG_FORMAT_CODE = ("xml");
 	// force format recognition through content only
 	// to force xml input to be checked against xsd before any attempt to decode it
 	public static final TGFileFormat TG_FORMAT = new TGFileFormat("TuxGuitar 2.0", "application/x-tuxguitar", new String[]{ TG_FORMAT_CODE }, true, false, false);
 
 	// XML tags and values of enums
+	protected static final String TAG_FORMAT_VERSION = "formatVersion";
 	protected static final String TAG_TGFile = "TuxGuitarFile";
 	protected static final String TAG_TGSONG = "TGSong" ;
 	protected static final String TAG_NAME = "name";
@@ -126,96 +135,68 @@ public class TGStream {
 	protected static final String TAG_DEAD = "dead";
 	protected static final String TAG_TRANSITION = "transition";
 
-	protected HashMap<String, Integer> tripletsReadMap;
-	protected HashMap<Integer, String> tripletsWriteMap;
-	protected HashMap<String, Integer> mapReadClefs;
-	protected HashMap<Integer, String> mapWriteClefs;
-	protected HashMap<String, Integer> mapReadStroke;
-	protected HashMap<Integer, String> mapWriteStroke;
-	protected HashMap<String, Integer> mapReadDirection;
-	protected HashMap<Integer, String> mapWriteDirection;
-	protected HashMap<String, Integer> harmonicReadMap;
-	protected HashMap<Integer, String> harmonicWritedMap;
-	protected HashMap<String, Integer> mapReadTransition;
-	protected HashMap<Integer, String> mapWriteTransition;
-
+	protected Map<String, Integer> tripletsReadMap;
+	protected Map<Integer, String> tripletsWriteMap;
+	protected Map<String, Integer> mapReadClefs;
+	protected Map<Integer, String> mapWriteClefs;
+	protected Map<String, Integer> mapReadStroke;
+	protected Map<Integer, String> mapWriteStroke;
+	protected Map<String, Integer> mapReadDirection;
+	protected Map<Integer, String> mapWriteDirection;
+	protected Map<String, Integer> harmonicReadMap;
+	protected Map<Integer, String> harmonicWritedMap;
+	protected Map<String, Integer> mapReadTransition;
+	protected Map<Integer, String> mapWriteTransition;
+	protected Map<Integer, Integer> mapReadGraceDuration;
+	protected Map<Integer, Integer> mapWriteGraceDuration;
 
 
 	public TGStream() {
 		this.tripletsReadMap = new HashMap<String,Integer>();
-		this.tripletsWriteMap = new HashMap<Integer, String>();
 		this.tripletsReadMap.put("none", TGMeasureHeader.TRIPLET_FEEL_NONE);
-		this.tripletsWriteMap.put(TGMeasureHeader.TRIPLET_FEEL_NONE, "none");
 		this.tripletsReadMap.put("eighth", TGMeasureHeader.TRIPLET_FEEL_EIGHTH);
-		this.tripletsWriteMap.put(TGMeasureHeader.TRIPLET_FEEL_EIGHTH, "eighth");
 		this.tripletsReadMap.put("sixteenth", TGMeasureHeader.TRIPLET_FEEL_SIXTEENTH);
-		this.tripletsWriteMap.put(TGMeasureHeader.TRIPLET_FEEL_SIXTEENTH, "sixteenth");
+		this.tripletsWriteMap = this.revertMap(this.tripletsReadMap);
 
 		this.mapReadClefs = new HashMap<String, Integer>();
-		this.mapWriteClefs = new HashMap<Integer, String>();
 		this.mapReadClefs.put("treble", TGMeasure.CLEF_TREBLE);
-		this.mapWriteClefs.put(TGMeasure.CLEF_TREBLE, "treble");
 		this.mapReadClefs.put("bass", TGMeasure.CLEF_BASS);
-		this.mapWriteClefs.put(TGMeasure.CLEF_BASS, "bass");
 		this.mapReadClefs.put("tenor", TGMeasure.CLEF_TENOR);
-		this.mapWriteClefs.put(TGMeasure.CLEF_TENOR, "tenor");
 		this.mapReadClefs.put("alto", TGMeasure.CLEF_ALTO);
-		this.mapWriteClefs.put(TGMeasure.CLEF_ALTO, "alto");
+		this.mapWriteClefs = this.revertMap(this.mapReadClefs);
 		
 		this.mapReadStroke = new HashMap<String, Integer>();
-		this.mapWriteStroke = new HashMap<Integer, String>();
 		this.mapReadStroke.put("none", TGStroke.STROKE_NONE);
-		this.mapWriteStroke.put(TGStroke.STROKE_NONE, "none");
 		this.mapReadStroke.put("up", TGStroke.STROKE_UP);
-		this.mapWriteStroke.put(TGStroke.STROKE_UP, "up");
 		this.mapReadStroke.put("down", TGStroke.STROKE_DOWN);
-		this.mapWriteStroke.put(TGStroke.STROKE_DOWN,"down");
+		this.mapWriteStroke = this.revertMap(this.mapReadStroke);
 		
 		this.mapReadDirection = new HashMap<String, Integer>();
-		this.mapWriteDirection = new HashMap<Integer, String>();
 		this.mapReadDirection.put("up", TGVoice.DIRECTION_UP);
-		this.mapWriteDirection.put(TGVoice.DIRECTION_UP, "up");
 		this.mapReadDirection.put("down", TGVoice.DIRECTION_DOWN);
-		this.mapWriteDirection.put(TGVoice.DIRECTION_DOWN, "down");
+		this.mapWriteDirection = this.revertMap(this.mapReadDirection);
 		
 		this.harmonicReadMap = new HashMap<String, Integer>();
-		this.harmonicWritedMap = new HashMap<Integer, String>();
 		this.harmonicReadMap.put(TGEffectHarmonic.KEY_NATURAL, TGEffectHarmonic.TYPE_NATURAL);
-		this.harmonicWritedMap.put(TGEffectHarmonic.TYPE_NATURAL, TGEffectHarmonic.KEY_NATURAL);
 		this.harmonicReadMap.put(TGEffectHarmonic.KEY_ARTIFICIAL, TGEffectHarmonic.TYPE_ARTIFICIAL);
-		this.harmonicWritedMap.put(TGEffectHarmonic.TYPE_ARTIFICIAL, TGEffectHarmonic.KEY_ARTIFICIAL);
 		this.harmonicReadMap.put(TGEffectHarmonic.KEY_PINCH, TGEffectHarmonic.TYPE_PINCH);
-		this.harmonicWritedMap.put(TGEffectHarmonic.TYPE_PINCH, TGEffectHarmonic.KEY_PINCH);
 		this.harmonicReadMap.put(TGEffectHarmonic.KEY_SEMI, TGEffectHarmonic.TYPE_SEMI);
-		this.harmonicWritedMap.put(TGEffectHarmonic.TYPE_SEMI, TGEffectHarmonic.KEY_SEMI);
 		this.harmonicReadMap.put(TGEffectHarmonic.KEY_TAPPED, TGEffectHarmonic.TYPE_TAPPED);
-		this.harmonicWritedMap.put(TGEffectHarmonic.TYPE_TAPPED, TGEffectHarmonic.KEY_TAPPED);
+		this.harmonicWritedMap = this.revertMap(this.harmonicReadMap);
 		
 		this.mapReadTransition = new HashMap<String, Integer>();
-		this.mapWriteTransition = new HashMap<Integer, String>();
 		this.mapReadTransition.put("none", TGEffectGrace.TRANSITION_NONE);
-		this.mapWriteTransition.put(TGEffectGrace.TRANSITION_NONE, "none");
 		this.mapReadTransition.put("slide", TGEffectGrace.TRANSITION_SLIDE);
-		this.mapWriteTransition.put(TGEffectGrace.TRANSITION_SLIDE, "slide");
 		this.mapReadTransition.put("bend", TGEffectGrace.TRANSITION_BEND);
-		this.mapWriteTransition.put(TGEffectGrace.TRANSITION_BEND, "bend");
 		this.mapReadTransition.put("hammer", TGEffectGrace.TRANSITION_HAMMER);
-		this.mapWriteTransition.put(TGEffectGrace.TRANSITION_HAMMER, "hammer");
+		this.mapWriteTransition = this.revertMap(this.mapReadTransition);
+		
+		this.mapReadGraceDuration = new HashMap<Integer, Integer>();
+		this.mapReadGraceDuration.put(64, 1);
+		this.mapReadGraceDuration.put(32, 2);
+		this.mapReadGraceDuration.put(16, 3);
+		this.mapWriteGraceDuration = this.revertMap(this.mapReadGraceDuration);
 	}
-	
-	// xml to tg: 64->1 (default), 32->2, 16->3
-	protected int readGraceDuration(int duration) {
-		if (duration==16) return 3;
-		if (duration==32) return 2;
-		return 1;
-	}
-	// tg to xml
-	protected int writeGraceDuration(int duration) {
-		if (duration==3) return 16;
-		if (duration==2) return 32;
-		return 64;
-	}
-
 	
 	protected class PositionValue {
 		private int position;
@@ -232,5 +213,70 @@ public class TGStream {
 		}
 	}
 	
+	private <V,K> Map<V,K> revertMap(Map<K,V> map) {
+		Map<V,K> revMap = new HashMap<V, K>();
+		for (K key : map.keySet()) {
+			revMap.put(map.get(key), key);
+		}
+		return revMap;
+	}
+	
+	protected Document getDocument(InputStream inputStream) throws IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		// see CVE-2020-14940
+		try {
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			factory.setXIncludeAware(false);
+		} catch (Throwable throwable) {
+		}
+		
+		try {
+			return factory.newDocumentBuilder().parse(inputStream);
+		} catch (Throwable throwable) {
+			throw new TGFileFormatException("Invalid xml file format", throwable);
+		}
+	}
+	
+	protected Node getChildNode(Node node, String nodeName) {
+		Node n = node.getFirstChild();
+		while (n!=null && !nodeName.equals(n.getNodeName())) {
+			n = n.getNextSibling();
+		}
+		return n;
+	}
+	
+	protected Node getSiblingNode(Node node, String nodeName) {
+		Node n = node;
+		while (n!=null && !nodeName.equals(n.getNodeName())) {
+			n = n.getNextSibling();
+		}
+		return n;
+	}
+	
+	protected boolean hasChild(Node node, String name) {
+		return (getChildNode(node, name) != null);
+	}
+	
+	protected String readSibling(Node node, String nodeName) {
+		return getSiblingNode(node, nodeName).getTextContent();
+	}
+	protected int readSiblingInt(Node node, String nodeName) {
+		return Integer.valueOf(readSibling(node, nodeName));
+	}
+	protected short readSiblingShort(Node node, String nodeName) {
+		return Short.valueOf(readSibling(node, nodeName));
+	}
+	
+	protected String readAttribute(Node node, String attributeName) {
+		return node.getAttributes().getNamedItem(attributeName).getTextContent();
+	}
+	
+	protected int readAttributeInt(Node node, String attributeName) {
+		return Integer.valueOf(readAttribute(node, attributeName));
+	}
+	
+	protected int readInt(Node node) {
+		return Integer.valueOf(node.getTextContent());
+	}
 	
 }

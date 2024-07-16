@@ -55,7 +55,7 @@ public class TGSongWriterImpl extends TGStream implements TGSongWriter {
 			
 			this.document = newDocument();
 			Node nodeRoot = this.addNode(this.document,TAG_TGFile);
-			Node nodeVersion = this.addNode(nodeRoot, "formatVersion");
+			Node nodeVersion = this.addNode(nodeRoot, TAG_FORMAT_VERSION);
 			this.addAttributeInt(nodeVersion, "major", FILE_FORMAT_TGVERSION.getMajor());
 			this.addAttributeInt(nodeVersion, "minor", FILE_FORMAT_TGVERSION.getMinor());
 			this.writeSong(handle.getSong(), this.addNode(nodeRoot, TAG_TGSONG));
@@ -291,7 +291,7 @@ public class TGSongWriterImpl extends TGStream implements TGSongWriter {
 			TGEffectGrace grace = effect.getGrace();
 			Node nodeGrace = this.addNode(nodeNote, TAG_GRACE);
 			this.addAttributeInt(nodeGrace, TAG_FRET, grace.getFret());
-			this.addAttributeInt(nodeGrace, TAG_DURATION, this.writeGraceDuration(grace.getDuration()));
+			this.addAttributeInt(nodeGrace, TAG_DURATION, this.mapWriteGraceDuration.get(grace.getDuration()));
 			this.addAttributeInt(nodeGrace, TAG_DYNAMIC, grace.getDynamic());
 			this.addAttribute(nodeGrace, TAG_TRANSITION, this.mapWriteTransition.get(grace.getTransition()));
 			this.addAttributeBool(nodeGrace, TAG_ONBEAT, grace.isOnBeat());

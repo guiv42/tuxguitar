@@ -124,7 +124,7 @@ public class TGFileFormatManager {
 		if( formatCode != null ) {
 			List<TGFileFormat> fileFormats = this.findReadFileFormats(commonFileFormats);
 			for(TGFileFormat fileFormat : fileFormats) {
-				if( fileFormat.isSupportedCode(formatCode)){
+				if( fileFormat.isSupportedCode(formatCode) && fileFormat.canRecognizeByFileExtension()){
 					return fileFormat;
 				}
 			}
@@ -144,7 +144,7 @@ public class TGFileFormatManager {
 		if( mimeType != null ) {
 			List<TGFileFormat> fileFormats = this.findReadFileFormats(commonFileFormats);
 			for(TGFileFormat fileFormat : fileFormats) {
-				if( fileFormat.isSupportedMimeType(mimeType)){
+				if( fileFormat.isSupportedMimeType(mimeType) && fileFormat.canRecognizeByMimeType()){
 					return fileFormat;
 				}
 			}

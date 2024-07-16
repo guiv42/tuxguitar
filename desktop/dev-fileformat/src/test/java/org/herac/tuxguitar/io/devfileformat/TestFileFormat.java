@@ -12,9 +12,12 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
+import org.herac.tuxguitar.app.TuxGuitar;
 import org.herac.tuxguitar.io.base.TGFileFormat;
+import org.herac.tuxguitar.io.base.TGFileFormatException;
 import org.herac.tuxguitar.io.base.TGFileFormatUtils;
 import org.herac.tuxguitar.io.base.TGSongReaderHandle;
+import org.herac.tuxguitar.io.base.TGSongStreamContext;
 import org.herac.tuxguitar.io.base.TGSongWriterHandle;
 import org.herac.tuxguitar.song.factory.TGFactory;
 import org.herac.tuxguitar.song.models.TGBeat;
@@ -50,24 +53,72 @@ class TestFileFormat {
 	@Test
 	void xmlCanBeExtended() throws FileNotFoundException {
 		assertTrue(validatesSchema("test_extended.xml"));
+		assertTrue(validatesSchema("Untitled_extended_21.xml"));
+	}
+	
+	@Test
+	void canOpenCompatibleExtendedFormat() throws IOException {
+		TGSongReaderHandle handle = readXmlSong("Untitled_extended_21.xml");
+		assertNotNull(handle.getSong());
+		// check context attribute has been set to suggest app upgrade to user
+		assertTrue(handle.isNewerFileFormatDetected()); 
+
+		// test with expected format version, flag shall not be set
+		handle = readXmlSong("Untitled_20.xml");
+		assertNotNull(handle.getSong());
+		assertFalse(handle.isNewerFileFormatDetected()); 
 	}
 	
 	@Test
 	void invalidFile() throws FileNotFoundException {
 		// invalid version
-		assertFalse(validatesSchema("versionKO.xml"));
+		assertFalse(validatesSchema("Untitled_extended_30.xml"));
 		
 		// not even an xml file (just random bytes)
 		assertFalse(validatesSchema("randomBytes.xml"));
+		
+		// valid xml, but not TuxGuitar
+		assertFalse(validatesSchema("notTuxGuitar.xml"));
+	}
+	
+	@Test
+	void newMajorVersionIsDetected () throws IOException {
+		// positive test: new major version detected
+		boolean exceptionCaught = false;
+		TGSongReaderHandle handle = new TGSongReaderHandle();
+		handle.setContext(new TGSongStreamContext());
+		handle.setInputStream(getClass().getClassLoader().getResource("Untitled_extended_30.xml").openStream());
+		handle.setFactory(new TGFactory());
+		org.herac.tuxguitar.io.devfileformat.TGNewerFormatSongReaderImpl songReader = new TGNewerFormatSongReaderImpl();
+		try {
+			songReader.read(handle);
+		} catch(TGFileFormatException e) {
+			assertEquals(TuxGuitar.getProperty("error.new-major-version"), e.getMessage());
+			exceptionCaught = true;
+		}
+		assertTrue(exceptionCaught);
+		
+		// negative test: new major version NOT detected
+		exceptionCaught = false;
+		handle = new TGSongReaderHandle();
+		handle.setSong(null);
+		handle.setContext(new TGSongStreamContext());
+		handle.setInputStream(getClass().getClassLoader().getResource("notTuxGuitar.xml").openStream());
+		handle.setFactory(new TGFactory());
+		songReader = new TGNewerFormatSongReaderImpl();
+		try {
+			songReader.read(handle);
+		} catch(TGFileFormatException e) {
+			// TODO translatable string
+			assertFalse("App upgrade is REQUIRED to read this file".equals(e.getMessage()));
+			exceptionCaught = true;
+		}
+		assertTrue(exceptionCaught);
 	}
 	
 	@Test
 	void openValidFile() throws IOException {
-		TGSongReaderHandle handle = new TGSongReaderHandle();
-		handle.setInputStream(getClass().getClassLoader().getResource("test.xml").openStream());
-		handle.setFactory(new TGFactory());
-		org.herac.tuxguitar.io.devfileformat.TGSongReaderImpl songReader = new TGSongReaderImpl();
-		songReader.read(handle);
+		TGSongReaderHandle handle = readXmlSong("test.xml");
 		TGSong song = handle.getSong();
 		assertEquals("TGSong.name", song.getName());
 		assertEquals("TGSong.artist", song.getArtist());
@@ -451,4 +502,15 @@ class TestFileFormat {
 		File xml = new File(getClass().getClassLoader().getResource(resourceFileName).getFile());
 		return validatesSchema(new FileInputStream(xml));
 	}
+	
+	private TGSongReaderHandle readXmlSong(String resourceFileName) throws IOException {
+		TGSongReaderHandle handle = new TGSongReaderHandle();
+		handle.setContext(new TGSongStreamContext());
+		handle.setInputStream(getClass().getClassLoader().getResource(resourceFileName).openStream());
+		handle.setFactory(new TGFactory());
+		org.herac.tuxguitar.io.devfileformat.TGSongReaderImpl songReader = new TGSongReaderImpl();
+		songReader.read(handle);
+		return handle;
+	}
+
 }

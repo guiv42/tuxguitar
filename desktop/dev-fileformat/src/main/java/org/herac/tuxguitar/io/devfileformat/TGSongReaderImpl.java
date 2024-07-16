@@ -1,17 +1,13 @@
 package org.herac.tuxguitar.io.devfileformat;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.herac.tuxguitar.io.base.TGFileFormat;
 import org.herac.tuxguitar.io.base.TGFileFormatException;
 import org.herac.tuxguitar.io.base.TGSongReader;
 import org.herac.tuxguitar.io.base.TGSongReaderHandle;
-import org.herac.tuxguitar.io.tg.TGFileFormatVersion;
 import org.herac.tuxguitar.song.factory.TGFactory;
 import org.herac.tuxguitar.song.models.TGBeat;
 import org.herac.tuxguitar.song.models.TGChannel;
@@ -41,8 +37,6 @@ import org.w3c.dom.Node;
 
 public class TGSongReaderImpl extends TGStream implements TGSongReader {
 
-	public static final TGFileFormatVersion SUPPORTED_FORMAT = new TGFileFormatVersion(TG_FORMAT, TG_FORMAT_VERSION);
-
 	private TGFactory factory;
 
 	@Override
@@ -58,6 +52,10 @@ public class TGSongReaderImpl extends TGStream implements TGSongReader {
 			TGSong song = this.factory.newSong();
 			Document xmlDocument = this.getDocument(inputStream);
 			Node root = getChildNode(xmlDocument, TAG_TGFile);
+			// checking minor version of file format (major version already checked by xsd)
+			Node nodeVersion = getChildNode(root, TAG_FORMAT_VERSION);
+			int minor = readAttributeInt(nodeVersion, "minor");
+			handle.setNewerFileFormatDetected(minor > FILE_FORMAT_TGVERSION.getMinor());
 			Node nodeSong = getChildNode(root, TAG_TGSONG);
 			this.readSong(song, nodeSong);
 			inputStream.close();
@@ -442,7 +440,7 @@ public class TGSongReaderImpl extends TGStream implements TGSongReader {
 	private void readGrace(TGNote note, Node nodeGrace) {
 		TGEffectGrace grace = this.factory.newEffectGrace();
 		grace.setFret(readAttributeInt(nodeGrace, TAG_FRET));
-		grace.setDuration(this.readGraceDuration(readAttributeInt(nodeGrace, TAG_DURATION)));
+		grace.setDuration(this.mapReadGraceDuration.get(readAttributeInt(nodeGrace, TAG_DURATION)));
 		grace.setDynamic(readAttributeInt(nodeGrace, TAG_DYNAMIC));
 		grace.setTransition(this.mapReadTransition.get(readAttribute(nodeGrace, TAG_TRANSITION)));
 		grace.setOnBeat("true".equals(readAttribute(nodeGrace, TAG_ONBEAT)));
@@ -479,62 +477,4 @@ public class TGSongReaderImpl extends TGStream implements TGSongReader {
 		return list;
 	}
 	
-	private Document getDocument(InputStream inputStream) throws IOException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		// see CVE-2020-14940
-		try {
-			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			factory.setXIncludeAware(false);
-		} catch (Throwable throwable) {
-		}
-		
-		try {
-			return factory.newDocumentBuilder().parse(inputStream);
-		} catch (Throwable throwable) {
-			throw new TGFileFormatException("Invalid xml file format", throwable);
-		}
-	}
-	
-	// reading nodes in the expected order, as defined by xsd
-	private Node getChildNode(Node node, String nodeName) {
-		Node n = node.getFirstChild();
-		while (n!=null && !nodeName.equals(n.getNodeName())) {
-			n = n.getNextSibling();
-		}
-		return n;
-	}
-	// reading nodes in the expected order, as defined by xsd
-	private Node getSiblingNode(Node node, String nodeName) {
-		Node n = node;
-		while (n!=null && !nodeName.equals(n.getNodeName())) {
-			n = n.getNextSibling();
-		}
-		return n;
-	}
-	private boolean hasChild(Node node, String name) {
-		return (getChildNode(node, name) != null);
-	}
-	
-	private String readSibling(Node node, String nodeName) {
-		return getSiblingNode(node, nodeName).getTextContent();
-	}
-	private int readSiblingInt(Node node, String nodeName) {
-		return Integer.valueOf(readSibling(node, nodeName));
-	}
-	private short readSiblingShort(Node node, String nodeName) {
-		return Short.valueOf(readSibling(node, nodeName));
-	}
-	
-	private String readAttribute(Node node, String attributeName) {
-		return node.getAttributes().getNamedItem(attributeName).getTextContent();
-	}
-	
-	private int readAttributeInt(Node node, String attributeName) {
-		return Integer.valueOf(readAttribute(node, attributeName));
-	}
-	
-	private int readInt(Node node) {
-		return Integer.valueOf(node.getTextContent());
-	}
-
 }
