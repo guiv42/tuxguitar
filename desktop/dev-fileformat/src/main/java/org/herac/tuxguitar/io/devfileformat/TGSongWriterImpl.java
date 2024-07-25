@@ -15,6 +15,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+
 import org.herac.tuxguitar.io.base.TGFileFormat;
 import org.herac.tuxguitar.io.base.TGFileFormatException;
 import org.herac.tuxguitar.io.base.TGSongWriter;
@@ -36,31 +41,53 @@ import org.herac.tuxguitar.song.models.TGVoice;
 import org.herac.tuxguitar.song.models.effects.TGEffectBend.BendPoint;
 import org.herac.tuxguitar.song.models.effects.TGEffectGrace;
 import org.herac.tuxguitar.song.models.effects.TGEffectTremoloBar.TremoloBarPoint;
+import org.herac.tuxguitar.util.TGVersion;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class TGSongWriterImpl extends TGStream implements TGSongWriter {
 	
-	private OutputStream stream;
 	private Document document;
 	
 	public TGFileFormat getFileFormat(){
 		return TG_FORMAT;
 	}
 	
+	@Override
 	public void write(TGSongWriterHandle handle) throws TGFileFormatException {
+		this.writeXMLDocument(handle);
+		ArchiveOutputStream<ZipArchiveEntry> outputStream;
 		try {
-			this.stream = handle.getOutputStream();
-			
+			outputStream = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, handle.getOutputStream());
+			ZipArchiveEntry zae = new ZipArchiveEntry(CONTENT_FILE_NAME);
+			outputStream.putArchiveEntry(zae);
+			this.saveDocument(outputStream);
+			outputStream.closeArchiveEntry();
+			outputStream.close();
+		} catch (ArchiveException | IOException e) {
+			e.printStackTrace();
+			throw new TGFileFormatException(e);
+		}
+	}
+	
+	public void writeXML(TGSongWriterHandle handle) throws TGFileFormatException {
+		this.writeXMLDocument(handle);
+		this.saveDocument(handle.getOutputStream());
+	}
+	
+	private void writeXMLDocument(TGSongWriterHandle handle) throws TGFileFormatException {
+		try {
 			this.document = newDocument();
 			Node nodeRoot = this.addNode(this.document,TAG_TGFile);
 			Node nodeVersion = this.addNode(nodeRoot, TAG_FORMAT_VERSION);
 			this.addAttributeInt(nodeVersion, "major", FILE_FORMAT_TGVERSION.getMajor());
 			this.addAttributeInt(nodeVersion, "minor", FILE_FORMAT_TGVERSION.getMinor());
+			nodeVersion = this.addNode(nodeRoot, TAG_TG_VERSION);
+			this.addAttributeInt(nodeVersion, "major", TGVersion.CURRENT.getMajor());
+			this.addAttributeInt(nodeVersion, "minor", TGVersion.CURRENT.getMinor());
+			this.addAttributeInt(nodeVersion, "revision", TGVersion.CURRENT.getRevision());
 			this.writeSong(handle.getSong(), this.addNode(nodeRoot, TAG_TGSONG));
-			this.saveDocument();
-			
 		}catch( Throwable throwable ){
 			throw new TGFileFormatException(throwable);
 		}
@@ -318,13 +345,13 @@ public class TGSongWriterImpl extends TGStream implements TGSongWriter {
 		}
 	}
 	
-	private void saveDocument() {
+	private void saveDocument(OutputStream stream) {
 		try {
 			TransformerFactory xformFactory = TransformerFactory.newInstance();
 			Transformer idTransform = xformFactory.newTransformer();
 			Source input = new DOMSource(this.document);
-			Result output = new StreamResult(this.stream);
-			idTransform.setOutputProperty(OutputKeys.INDENT, "yes");
+			Result output = new StreamResult(stream);
+			idTransform.setOutputProperty(OutputKeys.INDENT, "no");
 			idTransform.transform(input, output);
 		}catch(Throwable throwable){
 			throwable.printStackTrace();

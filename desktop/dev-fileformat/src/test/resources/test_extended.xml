@@ -7,6 +7,7 @@
      -->
 <TuxGuitarFile>
     <formatVersion major="2" minor="1"/>
+    <TGVersion major="2" minor="0" revision="0"/>
 
     <TGSong>
         <name>TGSong.name</name>

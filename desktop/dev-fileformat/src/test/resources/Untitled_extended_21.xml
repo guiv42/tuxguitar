@@ -2,6 +2,7 @@
 <!-- manually generated file, to emulate a compatible upgrade of 2.0 file format -->
 <TuxGuitarFile>
     <formatVersion major="2" minor="1"/>
+    <TGVersion major="2" minor="0" revision="0"/>
     <TGSong>
         <name/>
         <artist/>

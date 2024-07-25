@@ -1,5 +1,6 @@
 package org.herac.tuxguitar.io.devfileformat;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.herac.tuxguitar.app.TuxGuitar;
@@ -22,13 +23,21 @@ public class TGNewerFormatSongReaderImpl extends TGStream implements TGSongReade
 
 	@Override
 	public void read(TGSongReaderHandle handle) throws TGFileFormatException {
+		try {
+			this.readXML(getDecompressedContent(handle.getInputStream()));
+		} catch (TGFileFormatException | IOException e) {
+			throw new TGFileFormatException(e);
+		}
+	}
+	
+	// read uncompressed xml
+	public void readXML(InputStream inputStream) throws TGFileFormatException {
 		/* despite its name, this method does not read any file format, it always throws an exception
 		 * added value: it selects the right error message when a newer file format is detected
 		 * which cannot be decoded
 		 */
 		boolean newerMajorVersion = false;
 		try {
-			InputStream inputStream = handle.getInputStream();
 			Document xmlDocument = this.getDocument(inputStream);
 			Node root = getChildNode(xmlDocument, TAG_TGFile);
 			// checking major version

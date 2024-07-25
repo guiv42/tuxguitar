@@ -2,6 +2,7 @@
 <!-- manually generated file, to emulate a NOT compatible upgrade of 2.0 file format -->
 <TuxGuitarFile>
     <formatVersion major="3" minor="0"/>
+    <TGVersion major="4" minor="1" revision="2"/>
     <TGSong>
         <newIncompatibleElement>simulating NOT compatible upgrade</newIncompatibleElement>
         <name/>

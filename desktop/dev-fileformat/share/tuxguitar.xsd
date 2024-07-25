@@ -119,9 +119,15 @@
     <xs:attribute name="B" type="uint8" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="versionType">
+  <xs:complexType name="formatVersionType">
     <xs:attribute name="major" type="xs:integer" use="required" fixed="2"/>
     <xs:attribute name="minor" type="nonNegativeInteger" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="TGVersionType">
+    <xs:attribute name="major" type="nonNegativeInteger" use="required"/>
+    <xs:attribute name="minor" type="nonNegativeInteger" use="required"/>
+    <xs:attribute name="revision" type="nonNegativeInteger" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="keyValuePair">
@@ -399,7 +405,8 @@
   <xs:element name="TuxGuitarFile">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="formatVersion" type="versionType"/>
+        <xs:element name="formatVersion" type="formatVersionType"/>
+        <xs:element name="TGVersion" type="TGVersionType"/>
         <xs:element name="TGSong">
           <xs:complexType>
             <xs:sequence>

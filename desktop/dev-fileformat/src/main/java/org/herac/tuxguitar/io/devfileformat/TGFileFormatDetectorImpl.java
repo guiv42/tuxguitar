@@ -13,12 +13,24 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-public class TGFileFormatDetectorImpl implements TGFileFormatDetector{
+public class TGFileFormatDetectorImpl extends TGStream implements TGFileFormatDetector{
 
 	private static final String XSD_SCHEMA = "tuxguitar.xsd";
 	
+	public TGFileFormatDetectorImpl() {
+		super();
+	}
+	
 	@Override
 	public TGFileFormat getFileFormat(InputStream inputStream) {
+		try {
+			return this.getFileFormatXML(getDecompressedContent(inputStream));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	public TGFileFormat getFileFormatXML(InputStream inputStream) {
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = null;
 		try {

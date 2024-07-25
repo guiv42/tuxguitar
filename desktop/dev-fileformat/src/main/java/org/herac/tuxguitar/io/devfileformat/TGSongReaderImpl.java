@@ -1,5 +1,6 @@
 package org.herac.tuxguitar.io.devfileformat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +48,15 @@ public class TGSongReaderImpl extends TGStream implements TGSongReader {
 	@Override
 	public void read(TGSongReaderHandle handle) throws TGFileFormatException {
 		try {
+			this.readXML(handle, getDecompressedContent(handle.getInputStream()));
+		} catch (TGFileFormatException | IOException e) {
+			throw new TGFileFormatException(e);
+		}
+	}
+	
+	public void readXML(TGSongReaderHandle handle, InputStream inputStream) throws TGFileFormatException {
+		try {
 			this.factory = handle.getFactory();
-			InputStream inputStream = handle.getInputStream();
 			TGSong song = this.factory.newSong();
 			Document xmlDocument = this.getDocument(inputStream);
 			Node root = getChildNode(xmlDocument, TAG_TGFile);

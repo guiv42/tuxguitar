@@ -1,5 +1,9 @@
 package org.herac.tuxguitar.io.devfileformat;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -7,6 +11,9 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.io.IOUtils;
 import org.herac.tuxguitar.io.base.TGFileFormat;
 import org.herac.tuxguitar.io.base.TGFileFormatException;
 import org.herac.tuxguitar.song.models.TGMeasure;
@@ -28,13 +35,15 @@ public class TGStream {
 	protected static final TGVersion FILE_FORMAT_TGVERSION = new TGVersion(2,0,0);
 	
 	public static final String TG_FORMAT_NAME = ("TuxGuitar File Format");
-	public static final String TG_FORMAT_CODE = ("xml");
+	public static final String TG_FORMAT_CODE = ("tg2");
 	// force format recognition through content only
 	// to force xml input to be checked against xsd before any attempt to decode it
 	public static final TGFileFormat TG_FORMAT = new TGFileFormat("TuxGuitar 2.0", "application/x-tuxguitar", new String[]{ TG_FORMAT_CODE }, true, false, false);
 
 	// XML tags and values of enums
+	protected static final String CONTENT_FILE_NAME = "content.xml";
 	protected static final String TAG_FORMAT_VERSION = "formatVersion";
+	protected static final String TAG_TG_VERSION = "TGVersion";
 	protected static final String TAG_TGFile = "TuxGuitarFile";
 	protected static final String TAG_TGSONG = "TGSong" ;
 	protected static final String TAG_NAME = "name";
@@ -277,6 +286,22 @@ public class TGStream {
 	
 	protected int readInt(Node node) {
 		return Integer.valueOf(node.getTextContent());
+	}
+	
+	protected InputStream getDecompressedContent(InputStream inputStream) throws IOException {
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+		ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(bufferedInputStream);
+		ArchiveEntry zipEntry = null;
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+		while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+			if (zipEntry.getName().equals(CONTENT_FILE_NAME)) {
+				IOUtils.copy(zipInputStream, bufferedOutputStream);
+			}
+		}
+		bufferedOutputStream.flush();
+		byte buffer[] = outputStream.toByteArray();
+		return new ByteArrayInputStream(buffer);
 	}
 	
 }
