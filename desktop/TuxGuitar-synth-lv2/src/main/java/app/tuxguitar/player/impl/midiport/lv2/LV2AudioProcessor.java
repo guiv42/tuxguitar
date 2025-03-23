@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.tuxguitar.midi.synth.TGAudioBuffer;
+import app.tuxguitar.midi.synth.TGSynthSettings;
 import app.tuxguitar.midi.synth.remote.TGRemoteException;
 import app.tuxguitar.player.impl.midiport.lv2.jni.LV2Plugin;
 import app.tuxguitar.player.impl.midiport.lv2.remote.LV2RemoteInstance;
@@ -12,7 +13,7 @@ import app.tuxguitar.util.TGContext;
 public class LV2AudioProcessor {
 
 	public static final int BUFFER_SIZE = ( TGAudioBuffer.BUFFER_SIZE / 2 ) ;
-	public static final float SAMPLE_RATE = ( TGAudioBuffer.SAMPLE_RATE );
+	public static final float SAMPLE_RATE = ( TGSynthSettings.getDefaultAudioSampleRate() );
 
 	private Object lock = new Object();
 
