@@ -9,9 +9,9 @@ public class TGAudioSync {
 	private long lastDelay;
 	private Object lock;
 
-	public TGAudioSync() {
+	public TGAudioSync(int sampleRate) {
 		this.lock = new Object();
-		this.duration = Math.round((TGAudioBuffer.BUFFER_SIZE / 2) * 1000000000.00 / TGAudioBuffer.SAMPLE_RATE);
+		this.duration = Math.round((TGAudioBuffer.BUFFER_SIZE / 2) * 1000000000.00 / sampleRate);
 	}
 
 	public void sync() {

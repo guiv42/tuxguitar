@@ -75,7 +75,7 @@ public class TGSynthSongWriter implements TGSongWriter {
 				}
 				duration = duration / TGAudioBuffer.CHANNELS;
 				ByteArrayInputStream byteBuffer = new ByteArrayInputStream(audioBuffer.toByteArray());
-				AudioInputStream sourceStream = new AudioInputStream(byteBuffer, TGAudioLine.AUDIO_FORMAT, duration);
+				AudioInputStream sourceStream = new AudioInputStream(byteBuffer, TGAudioLine.DEFAULT_AUDIO_FORMAT, duration);
 				AudioInputStream targetStream = AudioSystem.getAudioInputStream(settings.getFormat(), sourceStream);
 				AudioSystem.write(targetStream, settings.getType(), out);
 			}

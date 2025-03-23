@@ -96,7 +96,7 @@ public class GervillProcessor implements TGMidiProcessor {
 			if( this.synth.isOpen()) {
 				this.synth.close();
 			}
-			this.stream = this.synth.openStream(TGAudioLine.AUDIO_FORMAT, this.createSynthInfo());
+			this.stream = this.synth.openStream(TGAudioLine.DEFAULT_AUDIO_FORMAT, this.createSynthInfo());
 			this.receiver = this.synth.getReceiver();
 
 			this.soundbankFactory.create(this.context, this.program, new GervillSoundbankCallback() {

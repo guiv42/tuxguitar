@@ -4,7 +4,6 @@ public class TGAudioBuffer {
 
 	public static final int CHANNELS = 2;
 	public static final int BUFFER_SIZE = 1024;
-	public static final float SAMPLE_RATE = 44100f;
 	public static final boolean BIGENDIAN = false;
 
 	private int buffers;

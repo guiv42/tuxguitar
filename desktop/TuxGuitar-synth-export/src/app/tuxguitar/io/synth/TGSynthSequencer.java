@@ -7,13 +7,14 @@ import java.util.List;
 
 import app.tuxguitar.midi.synth.TGAudioBuffer;
 import app.tuxguitar.midi.synth.TGSynthModel;
+import app.tuxguitar.midi.synth.TGSynthSettings;
 import app.tuxguitar.player.base.MidiPlayerException;
 import app.tuxguitar.song.models.TGDuration;
 
 public class TGSynthSequencer {
 
 	private static final double SECOND_IN_NANOS = 1000000000.00;
-	private static final double SAMPLE_IN_NANOS = ((TGAudioBuffer.BUFFER_SIZE / 2) * SECOND_IN_NANOS / TGAudioBuffer.SAMPLE_RATE);
+	private static final double SAMPLE_IN_NANOS = ((TGAudioBuffer.BUFFER_SIZE / 2) * SECOND_IN_NANOS / TGSynthSettings.getDefaultAudioSampleRate());
 
 	private long length;
 	private long tempoInUsq;
