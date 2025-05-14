@@ -123,7 +123,6 @@ public class TGTransportDialog implements TGEventListener {
 			}
 		});
 		TGDialogUtil.openDialog(this.dialog, TGDialogUtil.OPEN_STYLE_CENTER | TGDialogUtil.OPEN_STYLE_PACK);
-		this.loadIconsProcess.process();
 	}
 	
 	public void addListeners(){
@@ -394,8 +393,7 @@ public class TGTransportDialog implements TGEventListener {
 		this.label.setText(value);
 		
 		if( oldValue == null || oldValue.length() != value.length() ) {
-			UIPanel uiPanel = (UIPanel) this.label.getParent();
-			uiPanel.layout();
+			this.dialog.layout();
 		}
 	}
 	
