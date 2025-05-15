@@ -89,6 +89,7 @@
 	<string name="action_measure_add">Agregar compás</string>
 	<string name="action_measure_clean">Limpiar compás</string>
 	<string name="action_measure_remove">Borrar compás</string>
+	<!-- <string name="action_fix_voice"></string> -->
 
 	<string name="action_change_tied_note">Ligar Nota</string>
 	<string name="action_clean_beat">Limpiar Notas</string>
@@ -105,6 +106,7 @@
 	<string name="action_shift_note_down">Bajar una cuerda</string>
 	<string name="action_shift_note_up">Subir una cuerda</string>
 	<string name="action_change_stroke">Rasgueo</string>
+	<!-- <string name="action_change_pickstroke"></string> -->
 	<string name="action_change_text">Insertar Texto</string>
 
 	<string name="action_set_duration_whole">Redonda</string>
@@ -443,6 +445,13 @@
 	<string name="stroke_dlg_duration_16">Semicorchea</string>
 	<string name="stroke_dlg_duration_32">Fusa</string>
 	<string name="stroke_dlg_duration_64">Semifusa</string>
+
+	<!-- Pick stroke dialog -->
+	<!-- <string name="pickstroke_dlg_title"></string> -->
+	<string name="pickstroke_dlg_direction_label">Dirección:</string>
+	<string name="pickstroke_dlg_direction_none">Ninguna</string>
+	<!-- <string name="pickstroke_dlg_direction_up"></string> -->
+	<!-- <string name="pickstroke_dlg_direction_down"></string> -->
 
 	<!-- Channels view -->
 	<string name="channel_list">Instrumentos</string>

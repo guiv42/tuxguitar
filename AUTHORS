@@ -1,20 +1,34 @@
-Julian Gabriel Casadesus
+Julián Gabriel Casadesús
     * Project Admin
     * Developer
     * Contact: <julian@casadesus.com.ar> https://www.herac.com.ar
 
-Hernan Andres Casadesus 
+Hernán Andrés Casadesús
     * Developer
     * Contact: <hernan@casadesus.com.ar> https://www.herac.com.ar
 
 Guiv42
     * Developer
+    * French translation
     * Contact: https://github.com/guiv42
 
 Helge17
     * Binary builds
     * Breeze Theme
+    * German and Italian translation
     * Contact: https://github.com/helge17
+
+Ffio
+    * Developer
+    * Contact: https://github.com/ffio1
+
+m5ls7h
+    * Developer
+    * Contact: https://github.com/m5ls7h
+
+G-eos
+    * Developer
+    * Contact: https://github.com/G-eos
 
 BeFrankly
     * Developer
@@ -39,7 +53,7 @@ Trung An (An Đức Trung)
 
 Vendelisk
     * Documentation
-    * https://github.com/Vendelisk
+    * Contact: https://github.com/Vendelisk
 
 Olivier Humbert
     * French translation
@@ -54,11 +68,11 @@ Cyclopsian
     * Symbolic Theme
     * Contact: https://gitlab.com/cycloptic
 
-Nahuel Portilla 
+Nahuel Portilla
     * Developer
     * Contact: <nahu51@hotmail.com>
 
-Nikola Kolarovic
+Nikola Kolarović
     * Developer
     * Documentation
     * Serbian translation
@@ -66,23 +80,10 @@ Nikola Kolarovic
 
 Aaron Spike
     * Developer
-    * Contact: <aaron@ekips.org> http://www.ekips.org
-
-Ersplus
-    * French translation
-    * Ersplus Icon Theme
-    * Contact: <ersplus@gmail.com> http://ersplus.free.fr
-
-Licnep
-    * Blue Serious Icon Theme
-    * Contact: <licnep@users.sourceforge.net>
-
-Sascha Riemer
-    * Lavender Icon Theme
-    * Contact: <saschariemer@compuserve.de>
+    * Contact: <aaron@ekips.org> https://www.ekips.org
 
 Auria
-    * CoreAudio Plugin for MacOS
+    * Audio Unit plugin for macOS
     * Contact: <auria@users.sourceforge.net>
 
 Herak
@@ -95,7 +96,7 @@ Tomasz Bojczuk
 
 Grzegorz Pruchniakowski
     * Polish translation
-    * Contact: https://github.com/Gootector
+    * Contact: https://github.com/Pruchniakowski
 
 Jose Gato
     * Mac version
@@ -106,11 +107,11 @@ Benjamin Scherrer
 
 Thomas Thiel
     * Deutsch translation
-    * Contact: <kv@wolfchild.de> http://www.wolfchild.de
+    * Contact: <kv@wolfchild.de> https://www.wolfchild.de
 
 Sergio Abreu
     * Portuguese translation
-    * Contact: <dosergio@ubbi.com.br> http://sitedosergio.sitesbr.net
+    * Contact: <dosergio@ubbi.com.br> https://sitedosergio.sitesbr.net
 
 Markon
     * Italian translation
@@ -125,11 +126,11 @@ Máté Huszár
 
 Tim Loo
     * Chinese (Taiwan) translation
-    * Contact: http://www.sinan-melody.co.cc/wordpress_1/
+    * Contact: http://www.sinan-melody.co.cc
 
 PTT Team
     * Chinese (Taiwan) translation
-    * Contact: http://www.ptt.cc
+    * Contact: https://www.ptt.cc
 
 Shuo Huang
     * Chinese (GB) translation
@@ -137,10 +138,10 @@ Shuo Huang
 
 雅乐诗(Auase)
     * Chinese translation
-    * Contact: <auase@users.sourceforge.net> https://www.auase.com/
+    * Contact: <auase@users.sourceforge.net> https://www.auase.com
 
 Philippe Coval
-    * Debian/Ubuntu package maintainer ; Startup script
+    * Debian/Ubuntu package maintainer; Startup script
     * French translation
     * Contact: <rzr@users.sf.net> http://rzr.online.fr/contrib.htm
 
@@ -154,7 +155,7 @@ John Gustafsson
 
 Pietro Cerutti
     * FreeBSD port maintainer
-    * Contact: <gahr@gahr.ch> http://www.gahr.ch/
+    * Contact: <gahr@gahr.ch> https://www.gahr.ch
 
 Facundo Corradini
     * Documentation
@@ -163,6 +164,10 @@ Facundo Corradini
 Gabe Hargrave
     * Documentation
     * Contact: <rinkrinkerfink@gmail.com>
+
+Olesya Gerasimenko
+    * Russian translation
+    * Contact: https://github.com/OlesyaGerasimenko
 
 Vadim Ipatov
     * Russian translation
@@ -186,7 +191,7 @@ Nguyen Dinh Trung
 
 Keisuke Kato
     * Japanese translation
-    * Contact: <kisk.kato@gmail.com> http://mingaku.selfip.org/
+    * Contact: <kisk.kato@gmail.com> http://mingaku.selfip.org
 
 Beat Weisskopf
     * Deutsch translation
@@ -198,11 +203,11 @@ Xevi Noe i Nogueiras
 
 Jean-Pierre POULIN
     * Scales contributor
-    * Contact: <jeanpierre.poulin@free.fr> http://www.jeanpierrepoulin.com/
+    * Contact: <jeanpierre.poulin@free.fr> https://www.jeanpierrepoulin.com
 
 Lobo
     * Basque translation
-    * Contact: <lobo1985guitarrista@hotmail.es> http://www.myspace.com/lobotheguitardude
+    * Contact: <lobo1985guitarrista@hotmail.es> https://www.myspace.com/lobotheguitardude
 
 Pekka Manninen
     * Finnish translation
@@ -218,7 +223,7 @@ Periklis Ntanasis
 
 Svetoslav Stefanov
     * Bulgarian translation
-    * Contact: <lfu.project@gmail.com> http://learnfree.eu
+    * Contact: <lfu.project@gmail.com> https://learnfree.eu
 
 Taehun Yun
     * Korean translation
@@ -227,3 +232,7 @@ Taehun Yun
 Alejandro6626
     * Spanish translation
     * Contact: https://github.com/alejandro6626
+
+Klaus Rettinghaus
+    * MusicXML export
+    * Contact: https://github.com/rettinghaus

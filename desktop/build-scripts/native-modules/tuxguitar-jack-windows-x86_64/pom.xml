@@ -4,7 +4,7 @@
 
 	<parent>
 		<artifactId>tuxguitar-pom</artifactId>
-		<groupId>org.herac.tuxguitar</groupId>
+		<groupId>app.tuxguitar</groupId>
 		<version>9.99-SNAPSHOT</version>
 		<relativePath>../../../</relativePath>
 	</parent>
@@ -101,7 +101,6 @@
 								<copy todir="${project.build.directory}/build/lib">
 									<fileset file="${tuxguitar-jack.jni.path}/${tuxguitar-jack.jni.library.prefix}${tuxguitar-jack.jni.library.name}${tuxguitar-jack.jni.library.suffix}" />
 								</copy>
-								<chmod file="${project.build.directory}/build/lib/${tuxguitar-jack.jni.library.prefix}${tuxguitar-jack.jni.library.name}${tuxguitar-jack.jni.library.suffix}" perm="755" />
 							</target>
 						</configuration>
 						<goals>

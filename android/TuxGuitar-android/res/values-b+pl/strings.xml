@@ -57,7 +57,7 @@
 	<string name="action_view_layout_show_chord_name">Pokaż nazwy akordów</string>
 	<string name="action_view_layout_show_chord_diagram">Pokaż diagramy akordów</string>
 
-	<string name="action_transport_play">Odtwarzaj/zapauzuj utwór</string>
+	<string name="action_transport_play">Odtwarzaj/wstrzymaj utwór</string>
 
 	<string name="action_go_up">Przesuń kursor w górę</string>
 	<string name="action_go_down">Przesuń kursor w dół</string>
@@ -89,6 +89,7 @@
 	<string name="action_measure_add">Dodaj takt</string>
 	<string name="action_measure_clean">Wyczyść takt</string>
 	<string name="action_measure_remove">Usuń takt</string>
+	<string name="action_fix_voice">Napraw głos</string>
 
 	<string name="action_change_tied_note">Ligatura</string>
 	<string name="action_clean_beat">Wyczyść wartość</string>
@@ -105,6 +106,7 @@
 	<string name="action_shift_note_down">Oktawę w dół</string>
 	<string name="action_shift_note_up">Oktawę w górę</string>
 	<string name="action_change_stroke">Uderzenie strun</string>
+	<!-- <string name="action_change_pickstroke"></string> -->
 	<string name="action_change_text">Wstaw tekst</string>
 
 	<string name="action_set_duration_whole">Cała nuta</string>
@@ -124,10 +126,10 @@
 	<string name="action_set_duration_division_type_6">6 - Sekstola</string>
 	<string name="action_set_duration_division_type_7">7 - Septola</string>
 	<string name="action_set_duration_division_type_9">9 - Nowemola</string>
-	<!-- <string name="action_set_duration_division_type_10"></string> -->
-	<!-- <string name="action_set_duration_division_type_11"></string> -->
-	<!-- <string name="action_set_duration_division_type_12"></string> -->
-	<!-- <string name="action_set_duration_division_type_13"></string> -->
+	<string name="action_set_duration_division_type_10">10 - Decymola</string>
+	<string name="action_set_duration_division_type_11">11 - Undecymola</string>
+	<string name="action_set_duration_division_type_12">12 - Duodecymola</string>
+	<string name="action_set_duration_division_type_13">13 - Tercdecymola</string>
 
 	<string name="action_set_velocity_ppp">Piano pianissimo</string>
 	<string name="action_set_velocity_pp">Pianissimo</string>
@@ -155,7 +157,7 @@
 	<string name="action_change_let_ring">Wybrzmienie</string>
 	<string name="action_change_staccato">Staccato</string>
 	<string name="action_change_tapping">Tapping</string>
-	<string name="action_change_slapping">Slapping (klang)</string>
+	<string name="action_change_slapping">Slapping</string>
 	<string name="action_change_popping">Popping</string>
 	<string name="action_change_fade_in">Zgłośnienie</string>
 
@@ -265,20 +267,20 @@
 	<string name="key_signature_dlg_title">Zmień tonację</string>
 	<string name="key_signature_dlg_ks_label">Tonacja:</string>
 	<string name="key_signature_dlg_ks_value_natural">Bez znaków przykluczowych</string>
-	<string name="key_signature_dlg_ks_value_sharp_1">1 Krzyżyk</string>
-	<string name="key_signature_dlg_ks_value_sharp_2">2 Krzyżyki</string>
-	<string name="key_signature_dlg_ks_value_sharp_3">3 Krzyżyki</string>
-	<string name="key_signature_dlg_ks_value_sharp_4">4 Krzyżyki</string>
-	<string name="key_signature_dlg_ks_value_sharp_5">5 Krzyżyków</string>
-	<string name="key_signature_dlg_ks_value_sharp_6">6 Krzyżyków</string>
-	<string name="key_signature_dlg_ks_value_sharp_7">7 Krzyżyków</string>
-	<string name="key_signature_dlg_ks_value_flat_1">1 Bemol</string>
-	<string name="key_signature_dlg_ks_value_flat_2">2 Bemole</string>
-	<string name="key_signature_dlg_ks_value_flat_3">3 Bemole</string>
-	<string name="key_signature_dlg_ks_value_flat_4">4 Bemole</string>
-	<string name="key_signature_dlg_ks_value_flat_5">5 Bemoli</string>
-	<string name="key_signature_dlg_ks_value_flat_6">6 Bemoli</string>
-	<string name="key_signature_dlg_ks_value_flat_7">7 Bemoli</string>
+	<string name="key_signature_dlg_ks_value_sharp_1">1 krzyżyk</string>
+	<string name="key_signature_dlg_ks_value_sharp_2">2 krzyżyki</string>
+	<string name="key_signature_dlg_ks_value_sharp_3">3 krzyżyki</string>
+	<string name="key_signature_dlg_ks_value_sharp_4">4 krzyżyki</string>
+	<string name="key_signature_dlg_ks_value_sharp_5">5 krzyżyków</string>
+	<string name="key_signature_dlg_ks_value_sharp_6">6 krzyżyków</string>
+	<string name="key_signature_dlg_ks_value_sharp_7">7 krzyżyków</string>
+	<string name="key_signature_dlg_ks_value_flat_1">1 bemol</string>
+	<string name="key_signature_dlg_ks_value_flat_2">2 bemole</string>
+	<string name="key_signature_dlg_ks_value_flat_3">3 bemole</string>
+	<string name="key_signature_dlg_ks_value_flat_4">4 bemole</string>
+	<string name="key_signature_dlg_ks_value_flat_5">5 bemoli</string>
+	<string name="key_signature_dlg_ks_value_flat_6">6 bemoli</string>
+	<string name="key_signature_dlg_ks_value_flat_7">7 bemoli</string>
 	<string name="key_signature_dlg_options_apply_to_end">Zastosuj tę tonację do końca</string>
 
 	<!-- Time Signature dialog -->
@@ -443,6 +445,13 @@
 	<string name="stroke_dlg_duration_16">Szesnastka</string>
 	<string name="stroke_dlg_duration_32">Trzydziestodwójka</string>
 	<string name="stroke_dlg_duration_64">Sześćdziesięcioczwórka</string>
+
+	<!-- Pick stroke dialog -->
+	<!-- <string name="pickstroke_dlg_title"></string> -->
+	<string name="pickstroke_dlg_direction_label">Kierunek:</string>
+	<string name="pickstroke_dlg_direction_none">Brak</string>
+	<string name="pickstroke_dlg_direction_up">Kostkowanie w górę</string>
+	<string name="pickstroke_dlg_direction_down">Kostkowanie w dół</string>
 
 	<!-- Channels view -->
 	<string name="channel_list">Instrumenty</string>

@@ -1,7 +1,53 @@
-TuxGuitar 9.99-SNAPSHOT changes:
+TuxGuitar 2.0.0 (2025-xx-xx) changes:
 
-* Updated Polish translation
+* New file format, not readable by older versions
+* Possibility to add line breaks
+* Number of frets is now configurable per track
+* Possibility to force enharmonic representation of each note (e.g. G# or Ab)
+* Base duration for tempo is now configurable, not necessarily a quarter
+* Added pick stroke up/down effect on beat
+* Main toolbar reworked
+* Enable ASCII export on Android
+* Remove the outdated skins Ersplus, blue_serious, Lavender
+* Fix an old issue with tuplets that could lead to invalid measures
+* Fix pitch of audio unit plugin on macOS
+* Import TEF v3 files
+* Improved MusicXML export
+* Improved Guitar Pro import
+* Many small improvements and cleanups
+
+TuxGuitar 1.6.6 (2024-12-27) changes:
+
+* Fixed several issues when first track is muted
+* Improved TEF v2 import
+
+TuxGuitar 1.6.5 (2024-12-14) changes:
+
+* Add zoom control for Print/Export to pdf
+* Restore scrollbars during playback
+* Better support for upgrading an existing installation on Windows
+* Improved GP import
+* Save/restore player mode when switching tabs
+* Export only audible tracks to MIDI and audio files
+* Fix paste selection issue
+* Fix playback of alternative repeats
+* Fix playback of grace notes in percussion tracks
+* Correctly consider new default shortcuts after an upgrade
+* Minor improvements and cleanups
+
+TuxGuitar 1.6.4 (2024-08-23) changes:
+
+* Fixed performance issue on newer Linux versions
+* Updated Polish and Russian translation
 * Reworked duration and division menus
+* Reworked file open/save/import/export behaviour
+* Show dead note correctly in score
+* The chord editor now considers the current key signature when opening
+* Fixed bug when switching between page and linear layout
+* Added a text filter in plugin list
+* Improved notes names display on fretboard
+* Configurable fretboard size
+* More small improvements and cleanups
 
 TuxGuitar 1.6.3 (2024-06-06) changes:
 
@@ -13,9 +59,9 @@ TuxGuitar 1.6.3 (2024-06-06) changes:
 * Improved button in toolbar for tuplets
 * "Currently played beat" highlight improved
 * Made caret more visible
-* Adapated copy-paste function to better handle different tuning presets
-* Enabled files to be opened with double-click in Finder on MacOS
-* Display menu accelerators correctly on MacOS
+* Adapted copy-paste function to better handle different tuning presets
+* Enabled files to be opened with double-click in Finder on macOS
+* Display menu accelerators correctly on macOS
 * Removed confirmation "Do you want to apply changes now?"
 * Made marker font configurable
 * Simplified "Change Tuning" dialog

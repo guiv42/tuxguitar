@@ -17,9 +17,6 @@
         android:id="@+id/action_clean_beat"
         android:title="@string/action_clean_beat"/>
     <item
-        android:id="@+id/action_remove_unused_voice"
-        android:title="@string/action_remove_unused_voice"/>
-    <item
         android:id="@+id/action_change_text"
         android:title="@string/action_change_text"/>
     <item
@@ -34,6 +31,9 @@
     <item
         android:id="@+id/action_change_stroke"
         android:title="@string/action_change_stroke"/>
+    <item
+        android:id="@+id/action_change_pickstroke"
+        android:title="@string/action_change_pickstroke"/>
     <item
         android:id="@+id/action_increment_note_semitone"
         android:title="@string/action_increment_note_semitone"/>

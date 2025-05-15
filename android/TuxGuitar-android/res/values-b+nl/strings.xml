@@ -89,6 +89,7 @@
 	<string name="action_measure_add">Voeg maat Toe</string>
 	<string name="action_measure_clean">Wis maat</string>
 	<string name="action_measure_remove">Verwijder maat</string>
+	<!-- <string name="action_fix_voice"></string> -->
 
 	<string name="action_change_tied_note">Gekoppelde Noot</string>
 	<string name="action_clean_beat">Wis Beat</string>
@@ -105,6 +106,7 @@
 	<string name="action_shift_note_down">Shift Omlaag</string>
 	<string name="action_shift_note_up">Shift Omhoog</string>
 	<!-- <string name="action_change_stroke"></string> -->
+	<!-- <string name="action_change_pickstroke"></string> -->
 	<string name="action_change_text">Tekst Invoegen</string>
 
 	<string name="action_set_duration_whole">Helemaal</string>
@@ -443,6 +445,13 @@
 	<string name="stroke_dlg_duration_16">16e</string>
 	<string name="stroke_dlg_duration_32">32e</string>
 	<string name="stroke_dlg_duration_64">64e</string>
+
+	<!-- Pick stroke dialog -->
+	<!-- <string name="pickstroke_dlg_title"></string> -->
+	<!-- <string name="pickstroke_dlg_direction_label"></string> -->
+	<string name="pickstroke_dlg_direction_none">Geen</string>
+	<!-- <string name="pickstroke_dlg_direction_up"></string> -->
+	<!-- <string name="pickstroke_dlg_direction_down"></string> -->
 
 	<!-- Channels view -->
 	<!-- <string name="channel_list"></string> -->

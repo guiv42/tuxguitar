@@ -9,7 +9,7 @@
 </head>
 <body>
   <input type="checkbox" id="check" /> <label for="check"><b id="hamburger">☰</b> <b id="cancel">☓</b></label>
-  <script src="init.js"></script> 
+  <script src="init.js"></script>
   <div class="header">
     TuxGuitar Help
     <p id="version">Version 9.99-SNAPSHOT</p>
@@ -55,7 +55,7 @@
     <h2 id="edit_actions">Edit Actions</h2>
     <table>
       <tr>
-        <td class="left">Cut measure/selection</td>
+        <td class="left">Cut selection</td>
         <td class="right">Ctrl+X</td>
       </tr>
       <tr>
@@ -125,20 +125,20 @@
     <p>These shortcuts can also be used during Playback.</p>
     <table>
       <tr>
-        <td class="left">Go to next measure</td>
-        <td class="right">Ctrl+Right</td>
-      </tr>
-      <tr>
-        <td class="left">Go to last measure</td>
-        <td class="right">Ctrl+Shift+Right</td>
+        <td class="left">Go to first measure</td>
+        <td class="right">Ctrl+Shift+Left</td>
       </tr>
       <tr>
         <td class="left">Go to previous measure</td>
         <td class="right">Ctrl+Left</td>
       </tr>
       <tr>
-        <td class="left">Go to first measure</td>
-        <td class="right">Ctrl+Shift+Left</td>
+        <td class="left">Go to next measure</td>
+        <td class="right">Ctrl+Right</td>
+      </tr>
+      <tr>
+        <td class="left">Go to last measure</td>
+        <td class="right">Ctrl+Shift+Right</td>
       </tr>
     </table>
     <h2 id="beat_actions">Beat Actions</h2>
@@ -174,6 +174,10 @@
       <tr>
         <td class="left">Insert text</td>
         <td class="right">T</td>
+      </tr>
+      <tr>
+        <td class="left">Change note enharmonic version</td>
+        <td class="right">e</td>
       </tr>
       <tr>
         <td class="left">Move note on string above</td>
@@ -255,12 +259,20 @@
         <td class="right">Shift+Ins</td>
       </tr>
       <tr>
+        <td class="left">Go to first marker</td>
+        <td class="right">Alt+Shift+Left</td>
+      </tr>
+      <tr>
         <td class="left">Go to previous marker</td>
         <td class="right">Alt+Left</td>
       </tr>
       <tr>
         <td class="left">Go to next marker</td>
         <td class="right">Alt+Right</td>
+      </tr>
+      <tr>
+        <td class="left">Go to last marker</td>
+        <td class="right">Alt+Shift+Right</td>
       </tr>
     </table>
     <h2 id="dialogs">Dialogs</h2>
@@ -302,7 +314,11 @@
       </tr>
       <tr>
         <td class="left">Save file</td>
-        <td class="right">Crtl+S</td>
+        <td class="right">Ctrl+S</td>
+      </tr>
+      <tr>
+        <td class="left">Close current file</td>
+        <td class="right">Ctrl+W</td>
       </tr>
       <tr>
         <td class="left">Save as</td>
@@ -311,6 +327,10 @@
       <tr>
         <td class="left">Print tablature</td>
         <td class="right">Ctrl+P</td>
+      </tr>
+      <tr>
+        <td class="left">Print preview</td>
+        <td class="right">Ctrl+Shift+P</td>
       </tr>
       <tr>
         <td class="left">Exit TuxGuitar</td>

@@ -24,7 +24,7 @@ public class FFT {
 	 */
 
 	private static final double TWOPI = 2.0 * Math.PI;
-	
+
 	// Limits on the number of bits this algorithm can utilize
 	private static final int LOG2_MAXFFTSIZE = 15;
 	private static final int MAXFFTSIZE = 1 << LOG2_MAXFFTSIZE;
@@ -60,7 +60,7 @@ public class FFT {
 	 *
 	 * @param double [] xr is the real part of the data to be transformed
 	 * @param double [] xi is the imaginary part of the data to be transformed
-	 * (normally zero unless inverse transofrm is effect).
+	 * (normally zero unless inverse transform is effect).
 	 * @param boolean invFlag which is true if inverse transform is being
 	 * applied. false for a forward transform.
 	 */
@@ -78,7 +78,7 @@ public class FFT {
 					c = Math.cos(ang);
 					s = Math.sin(ang);
 					kn2 = k + n2;
-					
+
 					if (invFlag)
 						s = -s;
 

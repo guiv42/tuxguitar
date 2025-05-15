@@ -8,7 +8,7 @@ LIBRARY_PREFIX?=lib
 LIBRARY_SUFFIX?=.so
 
 LIBRARY=$(LIBRARY_PREFIX)$(LIBRARY_NAME)$(LIBRARY_SUFFIX)
-OBJECTS=org_herac_tuxguitar_jack_JackClient.o
+OBJECTS=app_tuxguitar_jack_JackClient.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -18,7 +18,7 @@ all:    $(LIBRARY)
 $(LIBRARY):	$(OBJECTS)
 	$(CC) $(LDFLAGS) -shared -o $(LIBRARY) $(OBJECTS) $(LDPATH) $(LDLIBS)
 
-clean: 
+clean:
 	$(RM) $(OBJECTS) $(LIBRARY)
 
 #eof "$Id: GNUmakefile,v 1.10 2008/04/17 20:06:34 rzr Exp $"

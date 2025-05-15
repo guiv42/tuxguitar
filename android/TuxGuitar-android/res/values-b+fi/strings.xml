@@ -89,6 +89,7 @@
 	<string name="action_measure_add">Lisää tahti</string>
 	<string name="action_measure_clean">Tyhjennä tahti</string>
 	<string name="action_measure_remove">Poista tahti</string>
+	<!-- <string name="action_fix_voice"></string> -->
 
 	<string name="action_change_tied_note">Sidottu nuotti</string>
 	<string name="action_clean_beat">Tyhjennä isku</string>
@@ -105,6 +106,7 @@
 	<string name="action_shift_note_down">Siirrä alas</string>
 	<string name="action_shift_note_up">Siirrä ylös</string>
 	<!-- <string name="action_change_stroke"></string> -->
+	<!-- <string name="action_change_pickstroke"></string> -->
 	<string name="action_change_text">Lisää tekstiä</string>
 
 	<string name="action_set_duration_whole">Kokonuotti</string>
@@ -443,6 +445,13 @@
 	<string name="stroke_dlg_duration_16">Kuudestoistaosanuotti</string>
 	<string name="stroke_dlg_duration_32">Kolmaskymmeneskahdesosanuotti</string>
 	<string name="stroke_dlg_duration_64">Kuudeskymmenesneljäsosanuotti</string>
+
+	<!-- Pick stroke dialog -->
+	<!-- <string name="pickstroke_dlg_title"></string> -->
+	<string name="pickstroke_dlg_direction_label">Suunta:</string>
+	<string name="pickstroke_dlg_direction_none">Ei mitään</string>
+	<!-- <string name="pickstroke_dlg_direction_up"></string> -->
+	<!-- <string name="pickstroke_dlg_direction_down"></string> -->
 
 	<!-- Channels view -->
 	<!-- <string name="channel_list"></string> -->

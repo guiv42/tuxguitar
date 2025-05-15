@@ -9,7 +9,7 @@
 		<key>CFBundleIconFile</key>
 		<string>icon.icns</string>
 		<key>CFBundleIdentifier</key>
-		<string>org.herac.tuxguitar</string>
+		<string>app.tuxguitar</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
@@ -72,6 +72,22 @@
 				<string>tgdoc.icns</string>
 				<key>CFBundleTypeName</key>
 				<string>PowerTab Document</string>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>LSIsAppleDefaultForType</key>
+				<true />
+				<key>LSTypeIsPackage</key>
+				<false />
+			</dict>
+			<dict>
+				<key>CFBundleTypeExtensions</key>
+				<array>
+					<string>tef</string>
+				</array>
+				<key>CFBundleTypeIconFile</key>
+				<string>tgdoc.icns</string>
+				<key>CFBundleTypeName</key>
+				<string>TablEdit Document</string>
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>LSIsAppleDefaultForType</key>

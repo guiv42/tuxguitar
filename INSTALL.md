@@ -1,6 +1,6 @@
 # Install TuxGuitar
 
-You can find ready to use installation packages for Linux, Windows, MacOS, FreeBSD and Android on
+You can find ready to use installation packages for Linux, Windows, macOS, FreeBSD and Android on
 
 [https://github.com/helge17/tuxguitar/releases/](https://github.com/helge17/tuxguitar/releases/)
 
@@ -16,12 +16,14 @@ For hints and workarounds needed to build TuxGuitar, see the script
 misc/build_tuxguitar_from_source.sh
 ```
 
+You can also try to build TuxGuitar using the [GitHub Actions](https://docs.github.com/en/actions) defined in the `.github` folder.
+
 ## Prerequisites
 
 - JDK 9 or higher
 - Maven 3.3 or higher
-- Fluidsynth (optional)
-- JACK (optional)
+- FluidSynth (optional)
+- Jack (optional)
 - Eclipse SWT 4
 
 ## Build on Debian/Ubuntu Linux
@@ -29,7 +31,7 @@ misc/build_tuxguitar_from_source.sh
 ### Install Prerequisites
 
 ```sh
-$ sudo apt install wget unzip git build-essential default-jdk maven libwebkit2gtk-4.0-37 libfluidsynth-dev libjack-jackd2-dev libasound2-dev liblilv-dev libsuil-dev qtbase5-dev
+$ sudo apt install wget unzip git build-essential default-jdk maven libwebkit2gtk-4.1-0 libfluidsynth-dev libjack-jackd2-dev libasound2-dev liblilv-dev libsuil-dev qtbase5-dev
 ```
 
 In order for Asian characters to be displayed correctly, you may also need to install the `fonts-wqy-zenhei` font package.
@@ -123,9 +125,9 @@ The Windows application is now located in the `desktop/build-scripts/tuxguitar-w
 
 To start TuxGuitar you need a Java Runtime Environment. You can get the one from [portableapps.com](https://portableapps.com/apps/utilities/OpenJDK64) and extract it to a subfolder named `jre`. Then you should be able to start TuxGuitar by double-clicking on `tuxguitar.exe` or `tuxguitar.bat`.
 
-## Build on MacOS
+## Build on macOS
 
-On MacOS you need to download and install [Homebrew](https://brew.sh) to build TuxGuitar.
+On macOS you need to download and install [Homebrew](https://brew.sh) to build TuxGuitar.
 
 ### Install Prerequisites
 
@@ -133,14 +135,15 @@ On MacOS you need to download and install [Homebrew](https://brew.sh) to build T
 $ brew install openjdk maven wget
 ```
 
-### Download and install SWT for MacOS
+### Download and install SWT for macOS
 
 ```sh
-$ wget https://archive.eclipse.org/eclipse/downloads/drops4/R-4.14-201912100610/swt-4.14-cocoa-macosx-`uname -m`.zip
-$ mkdir swt-4.14-cocoa-macosx-`uname -m`
-$ cd swt-4.14-cocoa-macosx-`uname -m`
-$ unzip ../swt-4.14-cocoa-macosx-`uname -m`.zip
-$ mvn install:install-file -Dfile=swt.jar -DgroupId=org.eclipse.swt -DartifactId=org.eclipse.swt.cocoa.macosx -Dpackaging=jar -Dversion=4.14
+$ TUX_ARCH=`uname -m | sed 's/arm64/aarch64/'`
+$ wget https://archive.eclipse.org/eclipse/downloads/drops4/R-4.33-202409030240/swt-4.33-cocoa-macosx-${TUX_ARCH}.zip
+$ mkdir swt-4.33-cocoa-macosx-${TUX_ARCH}
+$ cd swt-4.33-cocoa-macosx-${TUX_ARCH}
+$ unzip ../swt-4.33-cocoa-macosx-${TUX_ARCH}.zip
+$ mvn install:install-file -Dfile=swt.jar -DgroupId=org.eclipse.swt -DartifactId=org.eclipse.swt.cocoa.macosx -Dpackaging=jar -Dversion=4.33
 $ cd ..
 ```
 
@@ -152,7 +155,7 @@ Same as for Debian (see above).
 
 ```sh
 $ cd desktop/build-scripts/tuxguitar-macosx-swt-cocoa
-$ mvn -e clean verify
+$ mvn -e clean verify -P native-modules
 $ cd -
 ```
 
@@ -170,7 +173,7 @@ In order for Asian characters to be displayed correctly, you may also need to in
 
 ### Install SWT for FreeBSD
 
-On FreeBSD we use SWT from the OS to build and run TuxGuitar. FreeBSD 13.2 comes with SWT version 4.21.
+On FreeBSD we use SWT from the OS to build and run TuxGuitar. FreeBSD 14.2 comes with SWT version 4.21.
 
 ```sh
 mvn install:install-file -Dfile=/usr/local/share/java/classes/swt.jar -DgroupId=org.eclipse.swt -DartifactId=org.eclipse.swt.gtk.freebsd -Dpackaging=jar -Dversion=4.21

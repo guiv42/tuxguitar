@@ -8,7 +8,7 @@ LIBRARY_PREFIX?=
 LIBRARY_SUFFIX?=.dll
 
 LIBRARY=$(LIBRARY_PREFIX)$(LIBRARY_NAME)$(LIBRARY_SUFFIX)
-OBJECTS=org_herac_tuxguitar_player_impl_midiport_winmm_MidiSystem.o
+OBJECTS=app_tuxguitar_player_impl_midiport_winmm_MidiSystem.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -18,5 +18,5 @@ all:    $(LIBRARY)
 $(LIBRARY):	$(OBJECTS)
 	$(CC) $(LDFLAGS) -shared -o $(LIBRARY) $(OBJECTS) $(LDPATH) $(LDLIBS)
 
-clean: 
+clean:
 	$(RM) $(OBJECTS) $(LIBRARY)

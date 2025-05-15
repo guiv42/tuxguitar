@@ -124,7 +124,7 @@ import javax.sound.sampled.spi.MixerProvider;
  * is optional.
  *
  * <p>If the provider class is specified, and it can be
- * successully retrieved from the installed providers, the list of
+ * successfully retrieved from the installed providers, the list of
  * <code>Mixer.Info</code> objects is retrieved
  * from the provider. Otherwise, or when these mixers
  * do not provide a subsequent match, the list is retrieved
@@ -614,7 +614,7 @@ public class AudioSystem {
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
             return (SourceDataLine) AudioSystem.getLine(info);
         }
-    
+
     /**
      * Obtains an audio input stream of the indicated encoding, by converting the
      * provided audio input stream.
@@ -1183,7 +1183,7 @@ public class AudioSystem {
 //    }
 //
 //
-    
+
     /** Return a MixerProvider of a given class from the list of
         MixerProviders.
 

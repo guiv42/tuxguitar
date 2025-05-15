@@ -1,8 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
-	compileSdkVersion 30
-	buildToolsVersion "30.0.3"
+
+	namespace = 'app.tuxguitar.android'
+
+	compileSdkVersion 31
 
 	compileOptions {
 		sourceCompatibility JavaVersion.VERSION_1_8
@@ -10,8 +12,8 @@ android {
 	}
 
 	defaultConfig {
-		minSdkVersion 19
-		targetSdkVersion 30
+		minSdkVersion 24
+		targetSdkVersion 33
 		versionCode 1
 		versionName "1.0"
 	}
@@ -26,8 +28,8 @@ android {
 		main {
 			manifest.srcFile 'AndroidManifest.xml'
 			java.srcDirs = [
-					'../../common/TuxGuitar-lib/src',
-					'../../common/TuxGuitar-editor-utils/src',
+					'../../common/TuxGuitar-lib/src/main/java',
+					'../../common/TuxGuitar-editor-utils/src/main/java',
 					'../../common/TuxGuitar-gm-utils/src',
 					'./src'
 			]
@@ -39,8 +41,9 @@ android {
 
 dependencies {
 	implementation fileTree(include: ['*.jar'], dir: 'libs')
-	implementation 'androidx.multidex:multidex:2.0.0'
+	implementation 'androidx.multidex:multidex:2.0.1'
 	implementation 'androidx.appcompat:appcompat:1.0.0'
 	implementation 'androidx.preference:preference:1.1.0'
 	implementation 'com.google.android.material:material:1.1.0'
+	implementation 'org.apache.commons:commons-compress:1.26.0'
 }
