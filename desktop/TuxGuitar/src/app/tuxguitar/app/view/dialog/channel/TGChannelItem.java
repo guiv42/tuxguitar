@@ -83,6 +83,7 @@ public class TGChannelItem implements TGContinuousControl{
 				checkForNameModified();
 			}
 		});
+		this.nameText.setText("-");
 		col1Layout.set(this.nameText, 1, 1, UITableLayout.ALIGN_LEFT, UITableLayout.ALIGN_CENTER, true, false, 1, 1, 250f, null, null);
 
 		this.programCombo = uiFactory.createDropDownSelect(col1Panel);
