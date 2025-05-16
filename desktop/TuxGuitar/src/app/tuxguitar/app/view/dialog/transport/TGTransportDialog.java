@@ -202,6 +202,7 @@ public class TGTransportDialog implements TGEventListener {
 		this.label.setBgColor(background);
 		this.label.setFgColor(foreground);
 		this.label.setFont(font);
+		this.label.setText("0");
 
 		labelContainer.addDisposeListener(new UIDisposeListener() {
 			public void onDispose(UIDisposeEvent event) {
