@@ -77,6 +77,7 @@ public class TGTransportDialog implements TGEventListener {
 		new TGSkinnableColor(COLOR_FOREGROUND, new UIColorModel(0x00, 0x00, 0xFF)),
 	};
 
+	private boolean allParametersSet;
 	private TGContext context;
 	private UIWindow dialog;
 	private UILabel label;
@@ -100,6 +101,7 @@ public class TGTransportDialog implements TGEventListener {
 	private TreeMap<Long, TGMeasureHeader> headerMap;
 
 	public TGTransportDialog(TGContext context) {
+		this.allParametersSet = false;
 		this.context = context;
 		this.createSyncProcesses();
 		this.headerMap = new TreeMap<>();
@@ -129,6 +131,7 @@ public class TGTransportDialog implements TGEventListener {
 		});
 		TGDialogUtil.openDialog(this.dialog, TGDialogUtil.OPEN_STYLE_CENTER | TGDialogUtil.OPEN_STYLE_PACK);
 		dbg("openDialog");
+		this.allParametersSet = true;
 	}
 
 	public void addListeners(){
@@ -350,8 +353,10 @@ public class TGTransportDialog implements TGEventListener {
 			this.initToolBar();
 			this.loadOptionIcons();
 			this.dialog.setImage(TuxGuitar.getInstance().getIconManager().getAppIcon());
-			this.dialog.layout();
-			dbg("loadIcons/layout");
+			if (this.allParametersSet) {
+				this.dialog.layout();
+				dbg("loadIcons/layout");
+			}
 		}
 	}
 
@@ -399,7 +404,7 @@ public class TGTransportDialog implements TGEventListener {
 
 		this.label.setText(value);
 
-		if( oldValue == null || oldValue.length() != value.length() ) {
+		if( (oldValue == null || oldValue.length() != value.length()) && this.allParametersSet ) {
 			this.dialog.layout();
 			dbg("updateTicklLabel/layout");
 		}
