@@ -150,7 +150,7 @@ public class TGTransportDialog implements TGEventListener {
 
 	private void initComposites(){
 		UIPanel composite = getUIFactory().createPanel(this.dialog, true);
-		composite.setLayout(new UITableLayout(0f));
+		composite.setLayout(new UITableLayout());
 
 		UITableLayout parentLayout = (UITableLayout) this.dialog.getLayout();
 		parentLayout.set(composite, 1, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
