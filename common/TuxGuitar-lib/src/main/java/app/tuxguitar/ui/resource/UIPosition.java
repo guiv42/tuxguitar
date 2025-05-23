@@ -11,6 +11,7 @@ public class UIPosition {
 
 	public UIPosition(float x, float y) {
 		this.x = x;
+		debug(y);
 		this.y = y;
 	}
 
@@ -27,13 +28,29 @@ public class UIPosition {
 	}
 
 	public void setY(float y) {
+		// DEBUG
+		debug(y);
 		this.y = y;
 	}
 
 	public void set(UIPosition position) {
 		this.x = position.getX();
+		debug(position.getY());
 		this.y = position.getY();
 	}
+
+	// DEBUG
+	private void debug(float y) {
+		if (y<-1f) {
+			try {
+				throw new Exception("negative Y value :" + String.valueOf(y));
+			}
+			catch(Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	// END DEBUG
 
 	public void add(UIPosition position) {
 		this.x += position.getX();
