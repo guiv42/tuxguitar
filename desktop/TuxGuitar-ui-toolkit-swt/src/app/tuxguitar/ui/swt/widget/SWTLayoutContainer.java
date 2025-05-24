@@ -118,7 +118,10 @@ public abstract class SWTLayoutContainer<T extends Composite> extends SWTControl
 		// https://github.com/helge17/tuxguitar/issues/361
 		if (!(this.getControl() instanceof UIWindow)) {
 			UIPosition position = this.getBounds().getPosition();
-			position.setY(Math.max(0f, position.getY()));
+			if (position.getY()<0f) {
+				System.out.printf("####### fixing negative position %f\n", position.getY());
+				position.setY(0f);
+			}
 		}
 		this.setBounds(new UIRectangle(this.getBounds().getPosition(), this.getPackedSize()));
 	}
