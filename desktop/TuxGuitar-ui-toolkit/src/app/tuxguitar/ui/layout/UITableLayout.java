@@ -41,6 +41,8 @@ public class UITableLayout extends UIAbstractLayout {
 	public static final Integer ALIGN_BOTTOM = ALIGN_ENDING;
 
 	public static final String IGNORE_INVISIBLE = "ignore_invisible";
+	
+	private StringBuilder dbg; // debugging
 
 	private List<UITableCellSize> xSizes;
 	private List<UITableCellSize> ySizes;
@@ -191,6 +193,9 @@ public class UITableLayout extends UIAbstractLayout {
 		float marginBottom = this.get(MARGIN_BOTTOM, margin);
 		float marginLeft = this.get(MARGIN_LEFT, margin);
 		float marginRight = this.get(MARGIN_RIGHT, margin);
+		dbg = new StringBuilder("----UITableLayout.setBounds, bounds Y =");
+		dbg.append(bounds.getPosition().getY());
+		dbg.append("\n");
 
 		UIRectangle childArea = this.getChildArea(bounds, marginTop, marginBottom, marginLeft, marginRight);
 		UISize packedSize = container.getPackedContentSize();
@@ -211,6 +216,9 @@ public class UITableLayout extends UIAbstractLayout {
 				List<UITableCellSize> yRange = this.getSizes(this.ySizes, control, ROW, ROW_SPAN);
 
 				cellBounds.getPosition().setX(childArea.getX() + this.getPosition(this.xSizes, xRange.get(0)));
+				dbg.append("UITableLayout.setBounds, cellBounds, setY=");
+				dbg.append(childArea.getY() + this.getPosition(this.ySizes, yRange.get(0)));
+				dbg.append("\n");
 				cellBounds.getPosition().setY(childArea.getY() + this.getPosition(this.ySizes, yRange.get(0)));
 
 				for(UITableCellSize xSize : xRange) {
@@ -222,25 +230,38 @@ public class UITableLayout extends UIAbstractLayout {
 
 				UIRectangle cellArea = this.getChildArea(control, cellBounds);
 				UIRectangle alignedArea = this.getAlignedArea(control, cellArea);
-
 				control.setBounds(alignedArea);
+				if (alignedArea.getPosition().getY()<0f) {
+					dbg.append("alignedArea.Y = ");
+					dbg.append(alignedArea.getPosition().getY());
+					dbg.append("\n\n");
+					System.out.printf(dbg.toString());
+				}
 			}
 		}
 	}
 
 	public UIRectangle getChildArea(UIControl control, UIRectangle cellBounds) {
 		float margin = this.get(control, MARGIN, DEFAULT_CONTROL_MARGIN);
+		dbg.append("UITableLayout.getChildArea#1, margin = ");
+		dbg.append(margin);
 		float marginTop = this.get(control, MARGIN_TOP, margin);
+		dbg.append(", marginTop=");
+		dbg.append(marginTop);
 		float marginBottom = this.get(control, MARGIN_BOTTOM, margin);
 		float marginLeft = this.get(control, MARGIN_LEFT, margin);
 		float marginRight = this.get(control, MARGIN_RIGHT, margin);
 
+		dbg.append("\nUITableLayout.getChildArea#1, calling .getChildArea#2\n");
 		return this.getChildArea(cellBounds, marginTop, marginBottom, marginLeft, marginRight);
 	}
 
 	public UIRectangle getChildArea(UIRectangle bounds, float marginTop, float marginBottom, float marginLeft, float marginRight) {
 		UIRectangle uiRectangle = new UIRectangle();
 		uiRectangle.getPosition().setX(bounds.getX() + marginLeft);
+		dbg.append("UITableLayout.getChildArea#2, setY=");
+		dbg.append(bounds.getY() + marginTop);
+		dbg.append("\n");
 		uiRectangle.getPosition().setY(bounds.getY() + marginTop);
 		uiRectangle.getSize().setWidth(bounds.getWidth() - (marginLeft + marginRight));
 		uiRectangle.getSize().setHeight(bounds.getHeight() - (marginTop + marginBottom));
@@ -277,22 +298,37 @@ public class UITableLayout extends UIAbstractLayout {
 		if( cellArea.getHeight() > packedSize.getHeight() ) {
 			Integer alignY = this.get(control, ALIGN_Y, ALIGN_CENTER);
 			if( ALIGN_FILL.equals(alignY) ) {
+				dbg.append("UItableLayout.getAlignedArea, setY#1=");
+				dbg.append(cellArea.getY());
+				dbg.append("\n");
 				bounds.getPosition().setY(cellArea.getY());
 				bounds.getSize().setHeight(cellArea.getHeight());
 			}
 			else if( ALIGN_BEGINNING.equals(alignY) ) {
+				dbg.append("UItableLayout.getAlignedArea, setY#2=");
+				dbg.append(cellArea.getY());
+				dbg.append("\n");
 				bounds.getPosition().setY(cellArea.getY());
 				bounds.getSize().setHeight(packedSize.getHeight());
 			}
 			else if( ALIGN_ENDING.equals(alignY) ) {
+				dbg.append("UItableLayout.getAlignedArea, setY#3=");
+				dbg.append(cellArea.getY() + (cellArea.getHeight() - packedSize.getHeight()));
+				dbg.append("\n");
 				bounds.getPosition().setY(cellArea.getY() + (cellArea.getHeight() - packedSize.getHeight()));
 				bounds.getSize().setHeight(packedSize.getHeight());
 			}
 			else if( ALIGN_CENTER.equals(alignY) ) {
+				dbg.append("UItableLayout.getAlignedArea, setY#4=");
+				dbg.append(cellArea.getY() + (cellArea.getHeight() / 2f) - (packedSize.getHeight() / 2f));
+				dbg.append("\n");
 				bounds.getPosition().setY(cellArea.getY() + (cellArea.getHeight() / 2f) - (packedSize.getHeight() / 2f));
 				bounds.getSize().setHeight(packedSize.getHeight());
 			}
 		} else {
+			dbg.append("UItableLayout.getAlignedArea, setY#5=");
+			dbg.append(cellArea.getY());
+			dbg.append("\n");
 			bounds.getPosition().setY(cellArea.getY());
 			bounds.getSize().setHeight(packedSize.getHeight());
 		}
