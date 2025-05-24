@@ -94,7 +94,17 @@ public abstract class SWTLayoutContainer<T extends Composite> extends SWTControl
 		super.setBounds(bounds);
 
 		if( this.layout != null ) {
-			this.layout.setBounds(this, this.getChildArea());
+			// test
+			// https://github.com/helge17/tuxguitar/issues/361
+			UIRectangle childArea = this.getChildArea();
+			if (childArea.getPosition().getY()<0f) {
+				System.out.printf("SWTLayoutContainer.setBounds(bounds), Y=%f\n", childArea.getPosition().getY());
+				if (!(this.getControl() instanceof UIWindow)) {
+					System.out.printf("SWTLayoutContainer.setBounds(bounds), fixing\n");
+					childArea.getPosition().setY(0f);
+				}
+			}
+			this.layout.setBounds(this, childArea);
 		}
 		else {
 			for(UIControl uiControl : this.getChildren()) {
@@ -114,15 +124,6 @@ public abstract class SWTLayoutContainer<T extends Composite> extends SWTControl
 
 	public void pack() {
 		this.computePackedSize(null, null);
-		// test
-		// https://github.com/helge17/tuxguitar/issues/361
-		if (!(this.getControl() instanceof UIWindow)) {
-			UIPosition position = this.getBounds().getPosition();
-			if (position.getY()<0f) {
-				System.out.printf("####### fixing negative position %f\n", position.getY());
-				position.setY(0f);
-			}
-		}
 		this.setBounds(new UIRectangle(this.getBounds().getPosition(), this.getPackedSize()));
 	}
 }
