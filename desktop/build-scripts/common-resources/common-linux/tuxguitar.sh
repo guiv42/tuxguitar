@@ -1,4 +1,14 @@
 #!/bin/sh
+## try to read light/dark theme from dbus
+getTheme() {
+    dbusTheme=$(dbus-send --session --print-reply=literal --dest=org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Settings.Read string:org.freedesktop.appearance string:color-scheme)
+
+    tuxguitarTheme="none"
+    [ -n "$( echo $dbusTheme | sed -n '/uint32 2/p')" ] && tuxguitarTheme="light"
+    [ -n "$( echo $dbusTheme | sed -n '/uint32 1/p')" ] && tuxguitarTheme="dark"
+    echo $tuxguitarTheme
+}
+
 ##SCRIPT DIR
 TG_DIR=`dirname $(realpath "$0")`
 ##JAVA
@@ -17,4 +27,4 @@ export LD_LIBRARY_PATH
 ##Avoid problems with Accelerated Compositing mode in SWT/WebKitGTK
 export WEBKIT_DISABLE_COMPOSITING_MODE=1
 ##LAUNCH
-${JAVA} -cp :${CLASSPATH} -Dtuxguitar.home.path="${TG_DIR}" -Dtuxguitar.share.path="share/" -Djava.library.path="${LD_LIBRARY_PATH}" ${MAINCLASS} "$@"
+${JAVA} -cp :${CLASSPATH} -Dtuxguitar.home.path="${TG_DIR}" -Dtuxguitar.share.path="share/" -Djava.library.path="${LD_LIBRARY_PATH}" -Dtuxguitar.theme=$(getTheme) ${MAINCLASS} "$@"
