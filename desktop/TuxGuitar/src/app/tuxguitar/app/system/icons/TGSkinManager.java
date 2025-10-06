@@ -66,7 +66,6 @@ public class TGSkinManager {
 		if (skinDarkAuto && (systemPropertyTheme != null) && (!"".equals(systemPropertyTheme)) ) {
 			System.setProperty(PROPERTY_THEME,"");
 			String selectedSkin = null;
-			// TODO constants
 			if ((systemPropertyTheme.equals(THEME_LIGHT) && configuredSkin.endsWith(SUFFIX_DARK))) {
 				selectedSkin = configuredSkin.substring(0, configuredSkin.length() - SUFFIX_DARK.length());
 			}
