@@ -36,13 +36,13 @@ public class JackChannelProxy implements MidiChannel {
 	}
 
 	public void sendProgramChange(int value) throws MidiPlayerException {
-		if( this.midiChannel != null ){
+		if ((this.midiChannel != null) && !this.exclusive ){
 			this.midiChannel.sendProgramChange(value);
 		}
 	}
 
 	public void sendControlChange(int controller, int value) throws MidiPlayerException {
-		if( this.midiChannel != null ){
+		if ((this.midiChannel != null) && !this.exclusive ){
 			this.midiChannel.sendControlChange(controller, value);
 		}
 	}
