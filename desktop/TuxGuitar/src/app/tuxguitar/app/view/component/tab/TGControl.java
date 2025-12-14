@@ -1,6 +1,7 @@
 package app.tuxguitar.app.view.component.tab;
 
 import app.tuxguitar.app.TuxGuitar;
+import app.tuxguitar.app.system.config.TGConfigKeys;
 import app.tuxguitar.app.system.keybindings.KeyBindingActionManager;
 import app.tuxguitar.app.transport.TGTransport;
 import app.tuxguitar.app.ui.TGApplication;
@@ -18,6 +19,7 @@ import app.tuxguitar.ui.event.UISelectionListener;
 import app.tuxguitar.ui.layout.UITableLayout;
 import app.tuxguitar.ui.resource.UIPainter;
 import app.tuxguitar.ui.resource.UIRectangle;
+import app.tuxguitar.ui.resource.UISize;
 import app.tuxguitar.ui.widget.UICanvas;
 import app.tuxguitar.ui.widget.UIContainer;
 import app.tuxguitar.ui.widget.UIScrollBar;
@@ -33,6 +35,7 @@ public class TGControl {
 	private UICanvas canvas;
 	private UIScrollBar hScroll;
 	private UIScrollBar vScroll;
+	private boolean excludeScrollbars;
 
 	private Tablature tablature;
 	private int width;
@@ -56,6 +59,7 @@ public class TGControl {
 	public TGControl(TGContext context, UIContainer parent) {
 		this.context = context;
 		this.tablature = TablatureEditor.getInstance(this.context).getTablature();
+		this.excludeScrollbars = TuxGuitar.getInstance().getConfig().getBooleanValue(TGConfigKeys.DISPLAY_EXCLUDE_SCROLLBARS);
 		this.initialize(parent);
 	}
 
@@ -117,8 +121,8 @@ public class TGControl {
 		this.painting = true;
 		try{
 			isPlaying = MidiPlayer.getInstance(this.context).isRunning();
-			float canvasWidth = this.canvas.getBounds().getWidth();
-			float canvasHeight = this.canvas.getBounds().getHeight();
+			float canvasWidth = this.usableAreaBounds().getWidth();
+			float canvasHeight = this.usableAreaBounds().getHeight();
 			float scale = this.tablature.getScale();
 
 			// determine position in tab (which part shall be displayed): scroll x, y
@@ -158,7 +162,7 @@ public class TGControl {
 					|| (this.tablature.getViewLayout().getMode() != this.lastLayoutMode)) {
 				int lastWidth = this.width;
 				int lastHeight = this.height;
-				this.tablature.paintTablature(painter, this.canvas.getBounds(), -this.scrollX, -this.scrollY);
+				this.tablature.paintTablature(painter, this.usableAreaBounds(), -this.scrollX, -this.scrollY);
 				this.width = Math.round(this.tablature.getViewLayout().getWidth());
 				this.height = Math.round(this.tablature.getViewLayout().getHeight());
 				this.lastPaintedPlayedMeasure = playedMeasure;
@@ -166,7 +170,7 @@ public class TGControl {
 				if (moved && (scale != this.lastScale) || (lastWidth != this.width) || (lastHeight != this.height)) {
 					// move to caret measure and redraw a second time
 					this.moveTo(this.tablature.getCaret().getMeasure());
-					this.tablature.paintTablature(painter, this.canvas.getBounds(), -this.scrollX, -this.scrollY);
+					this.tablature.paintTablature(painter, this.usableAreaBounds(), -this.scrollX, -this.scrollY);
 				}
 			}
 
@@ -287,6 +291,14 @@ public class TGControl {
 			}
 		}
 		return (value != null ? Math.max(value, 0) : null);
+	}
+
+	private UIRectangle usableAreaBounds() {
+		UIRectangle rect = this.canvas.getBounds().clone();
+		if (this.excludeScrollbars) {
+			rect.setSize(new UISize(rect.getWidth() - this.vScroll.getSize().getWidth(), rect.getHeight() -this.hScroll.getSize().getHeight()));
+		}
+		return rect;
 	}
 
 	public void setFocus() {
