@@ -121,8 +121,10 @@ public class TGControl {
 		this.painting = true;
 		try{
 			isPlaying = MidiPlayer.getInstance(this.context).isRunning();
-			float canvasWidth = this.usableAreaBounds().getWidth();
-			float canvasHeight = this.usableAreaBounds().getHeight();
+			float canvasWidth = this.canvas.getBounds().getWidth();
+			float canvasHeight = this.canvas.getBounds().getHeight();
+			float marginRight = this.getMargins().getWidth();
+			float marginBottom = this.getMargins().getHeight();
 			float scale = this.tablature.getScale();
 
 			// determine position in tab (which part shall be displayed): scroll x, y
@@ -162,7 +164,7 @@ public class TGControl {
 					|| (this.tablature.getViewLayout().getMode() != this.lastLayoutMode)) {
 				int lastWidth = this.width;
 				int lastHeight = this.height;
-				this.tablature.paintTablature(painter, this.usableAreaBounds(), -this.scrollX, -this.scrollY);
+				this.tablature.paintTablature(painter, this.canvas.getBounds(), -this.scrollX, -this.scrollY, marginRight, marginBottom);
 				this.width = Math.round(this.tablature.getViewLayout().getWidth());
 				this.height = Math.round(this.tablature.getViewLayout().getHeight());
 				this.lastPaintedPlayedMeasure = playedMeasure;
@@ -170,7 +172,7 @@ public class TGControl {
 				if (moved && (scale != this.lastScale) || (lastWidth != this.width) || (lastHeight != this.height)) {
 					// move to caret measure and redraw a second time
 					this.moveTo(this.tablature.getCaret().getMeasure());
-					this.tablature.paintTablature(painter, this.usableAreaBounds(), -this.scrollX, -this.scrollY);
+					this.tablature.paintTablature(painter, this.canvas.getBounds(), -this.scrollX, -this.scrollY, marginRight, marginBottom);
 				}
 			}
 
@@ -293,20 +295,18 @@ public class TGControl {
 		return (value != null ? Math.max(value, 0) : null);
 	}
 
-	private UIRectangle usableAreaBounds() {
-		UIRectangle rect = this.canvas.getBounds().clone();
-		float width = rect.getWidth();
-		float height = rect.getHeight();
+	// right and bottom margins (for scrollbars)
+	private UISize getMargins() {
+		UISize size = new UISize();
 		if (this.excludeScrollbars) {
 			if (!this.vScroll.isVisible()) {
-				width -= this.vScroll.getSize().getWidth();
+				size.setWidth(this.vScroll.getSize().getWidth());
 			}
 			if (!this.hScroll.isVisible()) {
-				height -= this.hScroll.getSize().getHeight();
+				size.setHeight(this.hScroll.getSize().getHeight());
 			}
-			rect.setSize(new UISize(width, height));
 		}
-		return rect;
+		return size;
 	}
 
 	public void setFocus() {
