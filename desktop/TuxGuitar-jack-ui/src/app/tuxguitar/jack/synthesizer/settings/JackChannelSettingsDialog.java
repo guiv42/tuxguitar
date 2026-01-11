@@ -118,7 +118,6 @@ public class JackChannelSettingsDialog implements TGChannelSettingsDialog{
 
 		//-------------------- Jack Options-------------------------------
 
-		this.updateDefaultExclusiveChannels();
 		this.updateChannelCombos();
 		this.updateControls();
 
@@ -182,7 +181,7 @@ public class JackChannelSettingsDialog implements TGChannelSettingsDialog{
 	private void reloadExclusiveChannelCombos(){
 		List<Integer> channels = new ArrayList<Integer>();
 		for(int i = 0 ; i < MAX_CHANNELS ; i ++){
-			channels.add(new Integer(i));
+			channels.add(Integer.valueOf(i));
 		}
 
 		int channel1 = getIntegerChannelParameter(this.channel, JackChannelParameter.PARAMETER_GM_CHANNEL_1, -1);
