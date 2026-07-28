@@ -35,6 +35,8 @@ public class MidiSequencerImpl implements MidiSequencer {
 	}
 
 	public MidiSequenceHandler createSequence(int tracks) throws MidiPlayerException {
+		this.midiEventPlayer.clearEvents();
+		this.midiTickPlayer.clearTick();
 		return new MidiSequenceHandlerImpl(this, tracks);
 	}
 
