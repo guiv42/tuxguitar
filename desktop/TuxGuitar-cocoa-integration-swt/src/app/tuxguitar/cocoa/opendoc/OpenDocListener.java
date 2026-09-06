@@ -41,7 +41,7 @@ import java.util.List;
 public class OpenDocListener implements Listener, TGActionInterceptor {
 
 	private List<String> eventsText;
-	private volatile boolean enabled;
+	private boolean enabled;
 	private TGContext context;
 
 	public OpenDocListener(TGContext context) throws TGPluginException {
@@ -78,24 +78,8 @@ public class OpenDocListener implements Listener, TGActionInterceptor {
 	public boolean intercept(String id, TGActionContext actionContext) throws TGActionException {
 		boolean handled = false;
 		if (id.equals(TGReadURLAction.NAME)) {
-			// Remove interceptor - startup detection phase is over.
-			// Do NOT call disconnect(): the SWT listener must stay registered so that
-			// files opened from Finder while the app is running continue to work.
-			// Schedule via executeLater for the same reason disconnect() does:
-			// removeInterceptor cannot safely modify the interceptors list while it is
-			// being iterated (we are currently inside intercept()), and processEvents()
-			// must run on the UI thread after the interceptor has been removed.
-			//
-			// After processEvents() runs it drains eventsText:
-			//   - Java-arg launch: eventsText is empty → no-op, harmless.
-			//   - Race condition (reopenLastFiles fired before TGLoadTemplateAction was
-			//     intercepted): eventsText contains the CLI file → opened correctly.
-			TGSynchronizer.getInstance(this.context).executeLater(new Runnable() {
-				public void run() {
-					TGActionManager.getInstance(OpenDocListener.this.context).removeInterceptor(OpenDocListener.this);
-					OpenDocListener.this.processEvents();
-				}
-			});
+			// TuxGuitar was launched with an argument. SWT events will never be received
+			disconnect();
 			// and let action be processed normally
 		}
 		else if (id.equals(TGLoadTemplateAction.NAME)) {
