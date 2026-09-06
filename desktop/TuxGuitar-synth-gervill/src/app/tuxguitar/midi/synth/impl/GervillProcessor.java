@@ -58,7 +58,10 @@ public class GervillProcessor implements TGMidiProcessor {
 		}
 		this.stream = null;
 		this.receiver = null;
-		this.synth = null;
+		synchronized(this) {
+			// synchronized because it may be currently in use by another thread
+			this.synth = null;
+		}
 		this.buffer = null;
 	}
 
@@ -112,12 +115,15 @@ public class GervillProcessor implements TGMidiProcessor {
 	public void loadInstrument(Instrument instrument) {
 		// need to check if this.synth is null here:
 		// this method is called asynchronously, and it's possible that GervillProcessor.close() was called before this method
-		if (this.synth != null) {
-			this.synth.loadInstrument(instrument);
-	
-			Patch patch = instrument.getPatch();
-			for(MidiChannel midiChannel : this.synth.getChannels()) {
-				midiChannel.programChange(patch.getBank(), patch.getProgram());
+		synchronized(this) {
+			// synchronized to make sure that this.synth is not set to null after the 'if != null' condition but before it's used
+			if (this.synth != null) {
+				this.synth.loadInstrument(instrument);
+		
+				Patch patch = instrument.getPatch();
+				for(MidiChannel midiChannel : this.synth.getChannels()) {
+					midiChannel.programChange(patch.getBank(), patch.getProgram());
+				}
 			}
 		}
 	}
