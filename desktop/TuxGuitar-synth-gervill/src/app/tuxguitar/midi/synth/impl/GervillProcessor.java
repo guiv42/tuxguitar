@@ -110,11 +110,15 @@ public class GervillProcessor implements TGMidiProcessor {
 	}
 
 	public void loadInstrument(Instrument instrument) {
-		this.synth.loadInstrument(instrument);
-
-		Patch patch = instrument.getPatch();
-		for(MidiChannel midiChannel : this.synth.getChannels()) {
-			midiChannel.programChange(patch.getBank(), patch.getProgram());
+		// need to check if this.synth is null here:
+		// this method is called asynchronously, and it's possible that GervillProcessor.close() was called before this method
+		if (this.synth != null) {
+			this.synth.loadInstrument(instrument);
+	
+			Patch patch = instrument.getPatch();
+			for(MidiChannel midiChannel : this.synth.getChannels()) {
+				midiChannel.programChange(patch.getBank(), patch.getProgram());
+			}
 		}
 	}
 
