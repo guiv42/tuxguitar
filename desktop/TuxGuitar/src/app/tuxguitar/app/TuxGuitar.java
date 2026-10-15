@@ -181,7 +181,6 @@ public class TuxGuitar {
 			tgActionProcessor.setAttribute(TGErrorHandler.class.getName(), new TGErrorHandler() {
 				public void handleError(Throwable throwable) {
 					startDefaultSong();
-
 					TGErrorManager.getInstance(getContext()).handleError(throwable);
 				}
 			});
@@ -195,42 +194,6 @@ public class TuxGuitar {
 		TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, TGLoadTemplateAction.NAME);
 		tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
 		tgActionProcessor.process();
-	}
-
-	private void reopenLastFiles(List<URL> lastOpenUrls) {
-		List<URL> notFoundUrls = new ArrayList<URL>();
-		List<URL> currentUrls = new ArrayList<URL>();
-		for(TGDocument doc : TGDocumentListManager.getInstance(this.context).getDocuments()) {
-			if(doc.getUri() != null) {
-				try {
-					currentUrls.add(doc.getUri().toURL());
-				} catch (Exception e) {
-					// skip invalid URIs
-				}
-			}
-		}
-		for(URL url : lastOpenUrls) {
-			if(TGFileUtils.isLocalFile(url)) {
-				try {
-					if(!new File(url.toURI()).exists()) {
-						notFoundUrls.add(url);
-						continue;
-					}
-				} catch (Exception e) {
-					// skip invalid URIs
-				}
-			}
-			if(!currentUrls.contains(url)) {
-				TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, TGReadURLAction.NAME);
-				tgActionProcessor.setAttribute(TGReadURLAction.ATTRIBUTE_URL, url);
-				tgActionProcessor.process();
-			}
-		}
-		if(!notFoundUrls.isEmpty()) {
-			List<URL> updatedUrls = new ArrayList<URL>(TGLastOpenFiles.getInstance(this.context).getURLs());
-			updatedUrls.removeAll(notFoundUrls);
-			TGLastOpenFiles.getInstance(this.context).save(updatedUrls);
-		}
 	}
 
 	public void restoreControlsConfig(){

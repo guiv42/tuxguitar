@@ -36,14 +36,17 @@ public class TGReadURLAction extends TGActionBase {
 
 	protected void processAction(TGActionContext context){
 		TGDocumentListManager docListManager = TGDocumentListManager.getInstance(getContext());
-		try {
-			List<URL> urls = context.getAttribute(ATTRIBUTE_LIST_URLS);
-			if ((urls == null) || (urls.isEmpty()) ){
-				urls = new ArrayList<URL>();
-				urls.add(context.getAttribute(ATTRIBUTE_URL));
-			}
-			
-			for (URL url : urls) {
+		Throwable lastException = null;
+		int nbSongsOpen = 0;
+		
+		List<URL> urls = context.getAttribute(ATTRIBUTE_LIST_URLS);
+		if ((urls == null) || (urls.isEmpty()) ){
+			urls = new ArrayList<URL>();
+			urls.add(context.getAttribute(ATTRIBUTE_URL));
+		}
+		
+		for (URL url : urls) {
+			try {
 				context.setAttribute(ATTRIBUTE_URL, url);
 				TGDocument alreadyOpenedDoc = null;
 				for (TGDocument doc : docListManager.getDocuments()) {
@@ -74,9 +77,17 @@ public class TGReadURLAction extends TGActionBase {
 						tgActionManager.execute(TGOpenViewAction.NAME, context);
 					}
 				}
+				nbSongsOpen ++;
+			} catch (Throwable e) {
+				lastException = e;
 			}
-		} catch (Throwable e) {
-			throw new TGActionException(e.getMessage(), e);
+		}
+		if (lastException != null) {
+			// at least one file opening failed, but don't throw an exception if at least one succeeded
+			if (nbSongsOpen == 0) {
+				// throw an exception so the error handler can do something
+				throw new TGActionException(lastException.getMessage(), lastException);
+			}
 		}
 	}
 }
