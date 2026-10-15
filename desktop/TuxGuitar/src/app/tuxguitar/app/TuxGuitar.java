@@ -13,7 +13,6 @@ import app.tuxguitar.app.action.impl.view.TGToggleChannelsDialogAction;
 import app.tuxguitar.app.action.impl.view.TGToggleMatrixEditorAction;
 import app.tuxguitar.app.action.impl.view.TGTogglePianoEditorAction;
 import app.tuxguitar.app.action.impl.view.TGToggleTransportDialogAction;
-import app.tuxguitar.app.document.TGDocument;
 import app.tuxguitar.app.document.TGDocumentListAttributes;
 import app.tuxguitar.app.document.TGDocumentListManager;
 import app.tuxguitar.app.helper.TGLastOpenFiles;
