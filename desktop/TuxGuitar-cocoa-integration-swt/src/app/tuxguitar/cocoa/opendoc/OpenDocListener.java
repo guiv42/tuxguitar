@@ -77,15 +77,9 @@ public class OpenDocListener implements Listener, TGActionInterceptor {
 	@Override
 	public boolean intercept(String id, TGActionContext actionContext) throws TGActionException {
 		boolean handled = false;
-		if (id.equals(TGReadURLAction.NAME)) {
-			// TuxGuitar was launched with an argument. SWT events will never be received
-			disconnect();
-			// and let action be processed normally
-		}
-		else if (id.equals(TGLoadTemplateAction.NAME)) {
+		if (id.equals(TGReadURLAction.NAME) || id.equals(TGLoadTemplateAction.NAME)) {
 			// nothing more to be intercepted
 			TGActionManager.getInstance(OpenDocListener.this.context).removeInterceptor(OpenDocListener.this);
-			// TuxGuitar was launched without any argument
 			// Wait for action to be fully executed, then enable processing of events
 			TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, TGLoadTemplateAction.NAME);
 			tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
