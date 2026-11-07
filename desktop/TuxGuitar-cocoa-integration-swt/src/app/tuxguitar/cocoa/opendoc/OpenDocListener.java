@@ -78,8 +78,12 @@ public class OpenDocListener implements Listener, TGActionInterceptor {
 	public boolean intercept(String id, TGActionContext actionContext) throws TGActionException {
 		boolean handled = false;
 		if (id.equals(TGReadURLAction.NAME) || id.equals(TGLoadTemplateAction.NAME)) {
-			// nothing more to be intercepted
-			TGActionManager.getInstance(OpenDocListener.this.context).removeInterceptor(OpenDocListener.this);
+			// nothing more to be intercepted, remove interceptor asynchronously
+			TGSynchronizer.getInstance(this.context).executeLater(new Runnable() {
+				public void run() {
+					TGActionManager.getInstance(OpenDocListener.this.context).removeInterceptor(OpenDocListener.this);
+				}
+			});
 			// Wait for action to be fully executed, then enable processing of events
 			TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, TGLoadTemplateAction.NAME);
 			tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
