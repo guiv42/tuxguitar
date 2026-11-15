@@ -84,9 +84,15 @@ public class OpenDocListener implements Listener, TGActionInterceptor {
 					TGActionManager.getInstance(OpenDocListener.this.context).removeInterceptor(OpenDocListener.this);
 				}
 			});
-			// Wait for action to be fully executed, then enable processing of events
-			TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, TGLoadTemplateAction.NAME);
-			tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
+			// Wait for action to be fully executed, then enable processing of events:
+			// - start a new actionProcessor, with the same action id and the relevant actionContext
+			// - add "onFinish" handler, so that after action is processed the swt listener becomes enabled
+			TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, id);
+			if (id == TGLoadTemplateAction.NAME) {
+				tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
+			} else {
+				tgActionProcessor.setAttribute(TGReadURLAction.ATTRIBUTE_LIST_URLS, actionContext.getAttribute(TGReadURLAction.ATTRIBUTE_LIST_URLS));
+			}
 			tgActionProcessor.setOnFinish(new Runnable() {
 				public void run() {
 					OpenDocListener.this.processEvents();
