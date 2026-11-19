@@ -78,27 +78,27 @@ public class OpenDocListener implements Listener, TGActionInterceptor {
 	public boolean intercept(String id, TGActionContext actionContext) throws TGActionException {
 		boolean handled = false;
 		if (id.equals(TGReadURLAction.NAME) || id.equals(TGLoadTemplateAction.NAME)) {
-			// nothing more to be intercepted, remove interceptor asynchronously
 			TGSynchronizer.getInstance(this.context).executeLater(new Runnable() {
+				// asynchronously: get out of interceptor current execution
 				public void run() {
+					// nothing more to be intercepted, remove interceptor
 					TGActionManager.getInstance(OpenDocListener.this.context).removeInterceptor(OpenDocListener.this);
+					// After interceptor is removed, restart the same action with the relevant actionContext
+					// and with an additional "onFinish" handler, so that after action is processed the swt listener becomes enabled
+					TGActionProcessor tgActionProcessor = new TGActionProcessor(OpenDocListener.this.context, id);
+					if (id == TGLoadTemplateAction.NAME) {
+						tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
+					} else {
+						tgActionProcessor.setAttribute(TGReadURLAction.ATTRIBUTE_LIST_URLS, actionContext.getAttribute(TGReadURLAction.ATTRIBUTE_LIST_URLS));
+					}
+					tgActionProcessor.setOnFinish(new Runnable() {
+						public void run() {
+							OpenDocListener.this.processEvents();
+						}
+					});
+					tgActionProcessor.process();
 				}
 			});
-			// Wait for action to be fully executed, then enable processing of events:
-			// - start a new actionProcessor, with the same action id and the relevant actionContext
-			// - add "onFinish" handler, so that after action is processed the swt listener becomes enabled
-			TGActionProcessor tgActionProcessor = new TGActionProcessor(this.context, id);
-			if (id == TGLoadTemplateAction.NAME) {
-				tgActionProcessor.setAttribute(TGDocumentListAttributes.ATTRIBUTE_UNWANTED, true);
-			} else {
-				tgActionProcessor.setAttribute(TGReadURLAction.ATTRIBUTE_LIST_URLS, actionContext.getAttribute(TGReadURLAction.ATTRIBUTE_LIST_URLS));
-			}
-			tgActionProcessor.setOnFinish(new Runnable() {
-				public void run() {
-					OpenDocListener.this.processEvents();
-				}
-			});
-			tgActionProcessor.process();
 			handled = true;
 		}
 		return handled;
