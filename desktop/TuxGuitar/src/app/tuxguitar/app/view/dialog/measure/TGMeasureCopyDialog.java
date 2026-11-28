@@ -4,6 +4,8 @@ import java.util.Iterator;
 
 import app.tuxguitar.app.TuxGuitar;
 import app.tuxguitar.app.ui.TGApplication;
+import app.tuxguitar.app.util.TGMeasureRangeDialogUpdater;
+import app.tuxguitar.app.util.TGMeasureRangePanel;
 import app.tuxguitar.app.view.controller.TGViewContext;
 import app.tuxguitar.app.view.util.TGDialogUtil;
 import app.tuxguitar.document.TGDocumentContextAttributes;
@@ -11,29 +13,29 @@ import app.tuxguitar.editor.action.TGActionProcessor;
 import app.tuxguitar.editor.action.measure.TGCopyMeasureAction;
 import app.tuxguitar.song.models.TGMeasureHeader;
 import app.tuxguitar.song.models.TGSong;
-import app.tuxguitar.song.models.TGTrack;
 import app.tuxguitar.ui.UIFactory;
 import app.tuxguitar.ui.event.UISelectionEvent;
 import app.tuxguitar.ui.event.UISelectionListener;
 import app.tuxguitar.ui.layout.UITableLayout;
 import app.tuxguitar.ui.widget.UIButton;
 import app.tuxguitar.ui.widget.UICheckBox;
-import app.tuxguitar.ui.widget.UILabel;
 import app.tuxguitar.ui.widget.UILegendPanel;
 import app.tuxguitar.ui.widget.UIPanel;
-import app.tuxguitar.ui.widget.UISpinner;
 import app.tuxguitar.ui.widget.UIWindow;
 import app.tuxguitar.util.TGBeatRange;
 import app.tuxguitar.util.TGContext;
 
-public class TGMeasureCopyDialog {
+public class TGMeasureCopyDialog implements TGMeasureRangeDialogUpdater{
 	// to memorize user preferences (used each time dialog is opened)
 	static boolean initCopyAllTracks = true;
 	static boolean initCopyMarkers = false;
+	private UICheckBox copyMarkers;
+	private UIButton buttonOK;
+	private TGMeasureRangePanel measureRange;
+	private TGSong song;
 
 	public void show(final TGViewContext context) {
-		final TGSong song = context.getAttribute(TGDocumentContextAttributes.ATTRIBUTE_SONG);
-		final TGTrack track = context.getAttribute(TGDocumentContextAttributes.ATTRIBUTE_TRACK);
+		this.song = context.getAttribute(TGDocumentContextAttributes.ATTRIBUTE_SONG);
 		final TGMeasureHeader header = context.getAttribute(TGDocumentContextAttributes.ATTRIBUTE_HEADER);
 		final TGBeatRange beats = context.getAttribute(TGDocumentContextAttributes.ATTRIBUTE_BEAT_RANGE);
 
@@ -45,19 +47,8 @@ public class TGMeasureCopyDialog {
 		dialog.setLayout(dialogLayout);
 		dialog.setText(TuxGuitar.getProperty("edit.copy"));
 
-		//----------------------------------------------------------------------
-		UITableLayout rangeLayout = new UITableLayout();
-		UILegendPanel range = uiFactory.createLegendPanel(dialog);
-		range.setLayout(rangeLayout);
-		range.setText(TuxGuitar.getProperty("edit.copy"));
-		dialogLayout.set(range, 1, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
-
-		int measureCount = song.countMeasureHeaders();
-
-		UILabel fromLabel = uiFactory.createLabel(range);
-		fromLabel.setText(TuxGuitar.getProperty("edit.from") + ":");
-		rangeLayout.set(fromLabel, 1, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_CENTER, false, true);
-
+		//----------- measure range -----------------------------------------------------------
+		int measureCount = this.song.countMeasureHeaders();
 		int from;
 		int to;
 		if (beats!=null && !beats.isEmpty()) {
@@ -67,26 +58,10 @@ public class TGMeasureCopyDialog {
 			from = header.getNumber();
 			to = header.getNumber();
 		}
-
-		final UISpinner fromSpinner = uiFactory.createSpinner(range);
-		fromSpinner.setMinimum(1);
-		fromSpinner.setMaximum(measureCount);
-		fromSpinner.setValue(from);
-		rangeLayout.set(fromSpinner, 1, 2, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true, 1, 1, 180f, null, null);
-
-		UILabel toLabel = uiFactory.createLabel(range);
-		toLabel.setText(TuxGuitar.getProperty("edit.to") + ":");
-		rangeLayout.set(toLabel, 2, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_CENTER, false, true);
-
-		final UISpinner toSpinner = uiFactory.createSpinner(range);
-		toSpinner.setMinimum(1);
-		toSpinner.setMaximum(measureCount);
-		toSpinner.setValue(to);
-		rangeLayout.set(toSpinner, 2, 2, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true, 1, 1, 180f, null, null);
-
-		final int minSelection = 1;
-		final int maxSelection = track.countMeasures();
-
+		this.measureRange = new TGMeasureRangePanel(dialog, uiFactory, measureCount, from, to, this, context.getContext());
+		UILegendPanel rangePanel = this.measureRange.getPanel();
+		rangePanel.setText(TuxGuitar.getProperty("edit.copy"));
+		dialogLayout.set(rangePanel, 1, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
 
 		//------------ OPTIONS -----------------------------------------------
 		UICheckBox allTracks = null;
@@ -96,7 +71,7 @@ public class TGMeasureCopyDialog {
 		options.setText(TuxGuitar.getProperty("options"));
 		dialogLayout.set(options, 2, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
 		int rowCheckBox = 1;
-		if( song.countTracks() > 1 ){
+		if( this.song.countTracks() > 1 ){
 			allTracks = uiFactory.createCheckBox(options);
 			allTracks.setText(TuxGuitar.getProperty("edit.all-tracks"));
 			allTracks.setSelected(initCopyAllTracks);
@@ -104,57 +79,10 @@ public class TGMeasureCopyDialog {
 			rowCheckBox++;
 		}
 		final UICheckBox allTracksFinal = allTracks;
-		final UICheckBox copyMarkers = uiFactory.createCheckBox(options);
-		copyMarkers.setText(TuxGuitar.getProperty("edit.copy-markers"));
-		copyMarkers.setSelected(initCopyMarkers);
-		optionsLayout.set(copyMarkers, rowCheckBox, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
-
-		final UIButton firstMeasureButton = uiFactory.createButton(range);
-		firstMeasureButton.setText(TuxGuitar.getProperty("measure.first"));
-		rangeLayout.set(firstMeasureButton, 1, 3, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
-		
-		final UIButton lastMeasureButton = uiFactory.createButton(range);
-		lastMeasureButton.setText(TuxGuitar.getProperty("measure.last"));
-		rangeLayout.set(lastMeasureButton, 2, 3, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
-		
-		firstMeasureButton.addSelectionListener(new UISelectionListener() {
-			public void onSelect(UISelectionEvent event) {
-				fromSpinner.setValue(1);
-				updateCopyMarkers(song, 1, toSpinner.getValue(), copyMarkers);
-				updateButtonStates(firstMeasureButton, lastMeasureButton, 1, toSpinner.getValue(), measureCount);
-			}
-		});
-		
-		lastMeasureButton.addSelectionListener(new UISelectionListener() {
-			public void onSelect(UISelectionEvent event) {
-				toSpinner.setValue(measureCount);
-				updateCopyMarkers(song, fromSpinner.getValue(), measureCount, copyMarkers);
-				updateButtonStates(firstMeasureButton, lastMeasureButton, fromSpinner.getValue(), measureCount, measureCount);
-			}
-		});
-		
-
-		fromSpinner.addSelectionListener(new UISelectionListener() {
-			public void onSelect(UISelectionEvent event) {
-				int toSelection = toSpinner.getValue();
-				int fromSelection = clampFromSelection(fromSpinner.getValue(), toSelection, minSelection);
-				fromSpinner.setValue(fromSelection);
-				updateCopyMarkers(song, fromSelection, toSelection, copyMarkers);
-				updateButtonStates(firstMeasureButton, lastMeasureButton, fromSpinner.getValue(), toSpinner.getValue(), measureCount);
-			}
-		});
-		toSpinner.addSelectionListener(new UISelectionListener() {
-			public void onSelect(UISelectionEvent event) {
-				int fromSelection = fromSpinner.getValue();
-				int toSelection = clampToSelection(toSpinner.getValue(), fromSelection, maxSelection);
-				toSpinner.setValue(toSelection);
-				updateCopyMarkers(song, fromSelection, toSelection, copyMarkers);
-				updateButtonStates(firstMeasureButton, lastMeasureButton, fromSelection, toSelection, measureCount);
-			}
-		});
-		updateCopyMarkers(song, fromSpinner.getValue(), toSpinner.getValue(), copyMarkers);
-
-		updateButtonStates(firstMeasureButton, lastMeasureButton, fromSpinner.getValue(), toSpinner.getValue(), measureCount);
+		this.copyMarkers = uiFactory.createCheckBox(options);
+		this.copyMarkers.setText(TuxGuitar.getProperty("edit.copy-markers"));
+		this.copyMarkers.setSelected(initCopyMarkers);
+		optionsLayout.set(this.copyMarkers, rowCheckBox, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true);
 
 		//------------------BUTTONS--------------------------
 		UITableLayout buttonsLayout = new UITableLayout(0f);
@@ -162,22 +90,22 @@ public class TGMeasureCopyDialog {
 		buttons.setLayout(buttonsLayout);
 		dialogLayout.set(buttons, 3, 1, UITableLayout.ALIGN_RIGHT, UITableLayout.ALIGN_FILL, true, true);
 
-		UIButton buttonOK = uiFactory.createButton(buttons);
-		buttonOK.setText(TuxGuitar.getProperty("ok"));
-		buttonOK.setDefaultButton();
-		buttonOK.addSelectionListener(new UISelectionListener() {
+		this.buttonOK = uiFactory.createButton(buttons);
+		this.buttonOK.setText(TuxGuitar.getProperty("ok"));
+		this.buttonOK.setDefaultButton();
+		this.buttonOK.addSelectionListener(new UISelectionListener() {
 			public void onSelect(UISelectionEvent event) {
 				if (allTracksFinal!=null) {
 					initCopyAllTracks = allTracksFinal.isSelected();
 				}
 				initCopyMarkers = copyMarkers.isSelected();
-				processAction(context.getContext(), fromSpinner.getValue(), toSpinner.getValue(),
+				processAction(context.getContext(), measureRange.getFrom(), measureRange.getTo(),
 						(allTracksFinal != null ? allTracksFinal.isSelected() : false),
 						copyMarkers.isSelected());
 				dialog.dispose();
 			}
 		});
-		buttonsLayout.set(buttonOK, 1, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true, 1, 1, 80f, 25f, null);
+		buttonsLayout.set(this.buttonOK, 1, 1, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true, 1, 1, 80f, 25f, null);
 
 		UIButton buttonCancel = uiFactory.createButton(buttons);
 		buttonCancel.setText(TuxGuitar.getProperty("cancel"));
@@ -189,6 +117,7 @@ public class TGMeasureCopyDialog {
 		buttonsLayout.set(buttonCancel, 1, 2, UITableLayout.ALIGN_FILL, UITableLayout.ALIGN_FILL, true, true, 1, 1, 80f, 25f, null);
 		buttonsLayout.set(buttonCancel, UITableLayout.MARGIN_RIGHT, 0f);
 
+		this.update(from, to);
 		TGDialogUtil.openDialog(dialog,TGDialogUtil.OPEN_STYLE_CENTER | TGDialogUtil.OPEN_STYLE_PACK);
 	}
 
@@ -201,51 +130,19 @@ public class TGMeasureCopyDialog {
 		tgActionProcessor.process();
 	}
 
-	private void updateCopyMarkers(TGSong song, int from, int to, UICheckBox copyMarkers) {
+	@Override
+	public void update(int from, int to) {
 		boolean atLeastOneMarker = false;
-		Iterator<TGMeasureHeader> headers = song.getMeasureHeaders();
+		Iterator<TGMeasureHeader> headers = this.song.getMeasureHeaders();
 		while (headers.hasNext() && !atLeastOneMarker) {
 			TGMeasureHeader header = headers.next();
 			int measureNb = header.getNumber();
 			atLeastOneMarker = (measureNb>=from && measureNb<=to && header.getMarker() != null);
 		}
-		copyMarkers.setEnabled(atLeastOneMarker);
+		this.copyMarkers.setEnabled(atLeastOneMarker);
 		if (!atLeastOneMarker) {
-			copyMarkers.setSelected(false);
+			this.copyMarkers.setSelected(false);
 		}
-	}
-
-	private void updateButtonStates(UIButton firstMeasureButton, UIButton lastMeasureButton, 
-									int fromValue, int toValue, int measureCount) {
-		firstMeasureButton.setEnabled(isFirstMeasureButtonEnabled(fromValue));
-		lastMeasureButton.setEnabled(isLastMeasureButtonEnabled(toValue, measureCount));
-	}
-
-	private int clampFromSelection(int fromSelection, int toSelection, int minSelection) {
-		if (fromSelection < minSelection) {
-			return minSelection;
-		}
-		if (fromSelection > toSelection) {
-			return toSelection;
-		}
-		return fromSelection;
-	}
-
-	private int clampToSelection(int toSelection, int fromSelection, int maxSelection) {
-		if (toSelection < fromSelection) {
-			return fromSelection;
-		}
-		if (toSelection > maxSelection) {
-			return maxSelection;
-		}
-		return toSelection;
-	}
-
-	private boolean isFirstMeasureButtonEnabled(int fromValue) {
-		return (fromValue > 1);
-	}
-
-	private boolean isLastMeasureButtonEnabled(int toValue, int measureCount) {
-		return (toValue < measureCount);
+		this.buttonOK.setEnabled(from <= to);
 	}
 }
